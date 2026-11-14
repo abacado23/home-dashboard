@@ -7,7 +7,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Home">
 <title>Home</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&display=swap">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;600&display=swap">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html, body { height: 100%; overflow: hidden; color: #fff;
@@ -63,7 +64,7 @@
   #news     { grid-column: 1 / span 4; grid-row: 4; }
 
   /* Tall, condensed numbers (built into iPad and Mac) */
-  .num, #time .dg, #wTemp, #aqiNum, #miniTime .dg { font-family: Anton, "HelveticaNeue-CondensedBlack", "Helvetica Neue Condensed Black", "DejaVu Sans Condensed", sans-serif; font-weight: 400; }
+  .num, #time .dg, #wTemp, #aqiNum, #miniTime .dg { font-family: Oswald, -apple-system, "SF Pro Display", "Helvetica Neue", Inter, Arial, sans-serif; font-weight: 600; letter-spacing: -.01em; }
   .card { border-radius: 26px; padding: 18px 20px; position: relative; overflow: hidden;
     background: rgba(255,255,255,.17); border: 1px solid rgba(255,255,255,.32);
     -webkit-backdrop-filter: blur(18px) saturate(140%); backdrop-filter: blur(18px) saturate(140%);
@@ -166,7 +167,8 @@
   #mini { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #060608; color: #d8d0c4; display: none;
     -webkit-box-orient: vertical; -webkit-box-pack: center; -webkit-box-align: center; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
   #mini.on { display: -webkit-box; display: flex; }
-  #miniTime { font-size: 300px; font-weight: 500; letter-spacing: -.02em; line-height: 1; }
+  #miniTime { font-size: 260px; font-weight: 300; letter-spacing: -.02em; line-height: 1; }
+  #miniTime .dg { font-weight: 300; letter-spacing: 0; }
   #miniTime .ampm { font-size: 40px; font-weight: 300; letter-spacing: 0; margin-left: 10px; color: #8a8378; }
   #miniDate { font-size: 26px; font-weight: 400; color: #8a8378; margin-top: 18px; letter-spacing: .02em; }
   #ver { margin-left: auto; padding-left: 12px; font-size: 10px; opacity: .45; -webkit-flex-shrink: 0; flex-shrink: 0; }
@@ -203,12 +205,12 @@
   #prayer   { grid-column: 1; grid-row: 2; }
   #panel    { grid-column: 2; grid-row: 2; }
   #news     { grid-column: 1 / span 2; grid-row: 3; }
-  #time { font-weight: 400; letter-spacing: 0; line-height: .9; }
+  #time { font-weight: 600; letter-spacing: -.01em; line-height: .9; }
   .box { position: relative; border-radius: 26px; padding: 14px 22px 16px; color: #fff; overflow: hidden;
     box-shadow: 0 10px 30px rgba(60,20,0,.18); border: 1px solid rgba(255,255,255,.35); }
   #weather, #aqi { grid-column: auto; grid-row: auto; min-height: 0; }
   #weather { background: var(--wbox); }
-  .bigNum { display: inline-block; white-space: nowrap; font-size: 120px; line-height: 1.05; letter-spacing: 0; font-weight: 400; margin: 0; }
+  .bigNum { display: inline-block; white-space: nowrap; font-size: 120px; line-height: 1.05; letter-spacing: -.01em; font-weight: 600; margin: 0; }
   .boxIcon { position: absolute; right: 18px; top: 50%; margin-top: -48px; width: 96px; height: 96px; font-size: 80px; line-height: 96px; text-align: center; }
   #aqiFace { right: 14px; bottom: auto; }
   #aqiFace svg { width: 96px; height: 96px; }
@@ -222,7 +224,7 @@
   .pr { padding: 14px 0 12px !important; }
   .pr { min-width: 0; display: -webkit-box; display: flex; -webkit-box-orient: vertical; flex-direction: column; -webkit-box-pack: center; justify-content: center; padding: 6px 0; border-radius: 20px; }
   .pr .n { font-size: 19px; }
-  .pr .t { font-family: Anton, "HelveticaNeue-CondensedBlack", "DejaVu Sans Condensed", sans-serif; font-weight: 400; font-size: 52px; line-height: 1.1; margin-top: 4px; white-space: nowrap; }
+  .pr .t { font-family: Oswald, -apple-system, "SF Pro Display", "Helvetica Neue", Inter, Arial, sans-serif; font-weight: 500; letter-spacing: 0; font-size: 52px; line-height: 1.1; margin-top: 4px; white-space: nowrap; }
   /* full-screen quote */
   #quoteFull { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--cream); color: var(--ink); opacity: 0; pointer-events: none;
     transition: opacity 1.5s ease; display: -webkit-box; display: flex; -webkit-box-align: center; align-items: center; -webkit-box-pack: center; justify-content: center; padding: 60px 80px; }
@@ -284,7 +286,7 @@
     </div>
   </div>
 
-  <div id="news"><span id="newsTag">BBC</span><span id="newsText"></span><span id="ver">v11</span></div>
+  <div id="news"><span id="newsTag">BBC</span><span id="newsText"></span><span id="ver">v13</span></div>
 </div>
 
 <div id="quoteFull"><div id="qInner"><div id="cover"></div><div id="quoteText"><div id="qLabel">Quote of the day</div><div id="quote"></div></div></div></div>
@@ -462,10 +464,10 @@ function fitNums() { fitNum($('wTemp'), 170); fitNum($('aqiNum'), 170); }
 window.addEventListener('resize', function () { setTimeout(function () { fitClock(); fitNums(); }, 50); });
 function fitPrayer() {
   var cells = document.querySelectorAll('.pr .t'); if (!cells.length) return;
-  for (var i = 0; i < cells.length; i++) cells[i].style.fontSize = '52px';
-  var colW = cells[0].parentNode.clientWidth - 12, widest = 0;
+  for (var i = 0; i < cells.length; i++) cells[i].style.fontSize = '46px';
+  var colW = cells[0].parentNode.clientWidth - 26, widest = 0;
   for (var k = 0; k < cells.length; k++) widest = Math.max(widest, cells[k].offsetWidth);
-  if (widest > colW) for (var j = 0; j < cells.length; j++) cells[j].style.fontSize = Math.floor(52 * colW / widest) + 'px';
+  if (widest > colW) for (var j = 0; j < cells.length; j++) cells[j].style.fontSize = Math.floor(46 * colW / widest) + 'px';
 }
 var shownQuote = null;
 function showQuote(q) {
@@ -776,7 +778,7 @@ function fitScreen() {
     if (sh > h) h = sh;
   } $('app').style.height = h + 'px'; $('app').style.bottom = 'auto'; }
 fitScreen(); window.addEventListener('resize', fitScreen);
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitClock); window.addEventListener('orientationchange', function () { setTimeout(fitScreen, 300); });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fitClock(); fitNums(); fitPrayer(); }); window.addEventListener('orientationchange', function () { setTimeout(fitScreen, 300); });
 setTimeout(function () { fitScreen(); fitClock(); fitNums(); fitPrayer(); }, 1000);
 if (readConfig()) start(); else { tickClock(); showSetup(); }
 </script>
