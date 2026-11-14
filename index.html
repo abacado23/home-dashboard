@@ -306,7 +306,7 @@
   </div>
 
   <div id="news" style="display:none"><span id="newsTag"></span><span id="newsText"></span></div>
-  <span id="ver">v14</span>
+  <span id="ver">v16</span>
 </div>
 
 <div id="quoteFull"><div id="qInner"><div id="cover"></div><div id="quoteText"><div id="qLabel">Quote of the day</div><div id="quote"></div></div></div></div>
@@ -785,6 +785,16 @@ function showNewsFull() {
 }
 $('newsFull').addEventListener('click', function () { clearInterval(newsTimer); $('newsFull').className = ''; });
 
+// Auto-update: every 30 minutes, check GitHub for a newer version of this page and reload into it.
+// (The home-screen app holds on to old copies, so we load the new one under a fresh address.)
+function checkForUpdate() {
+  if (CFG.demo || location.protocol === 'file:') return;
+  fetch(location.pathname + '?check=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.text(); }).then(function (html) {
+    var m = html.match(/id="ver">(v\d+)</), mine = $('ver').textContent;
+    if (m && m[1] !== mine) location.replace(location.pathname + '?' + m[1] + location.hash);
+  }).catch(function () {});
+}
+
 function start() {
   tickClock(); setInterval(tickClock, 10e3);
   renderPanel();
@@ -794,6 +804,7 @@ function start() {
   loadPrayer().catch(retryLater(loadPrayer));
   every(loadCalendar, 60);
   every(loadTasks, 10);
+  setTimeout(checkForUpdate, 20e3); setInterval(checkForUpdate, 30 * 60e3);
   setInterval(showQuoteFull, SETTINGS.quoteEvery * 60e3);
   setTimeout(function () { showNewsFull(); setInterval(showNewsFull, SETTINGS.newsEvery * 60e3); }, SETTINGS.newsEvery * 30e3);
   if (/news=1/.test(location.hash)) { lastTouch = 0; setTimeout(showNewsFull, 800); }
@@ -831,11 +842,7 @@ setTimeout(function () { document.body.className += ' ready'; }, 1500);
 // Size the layout to the real visible screen instead.
 function fitScreen() {
   var h = window.innerHeight || document.documentElement.clientHeight;
-  if (navigator.standalone) {   // home-screen app always fills the whole screen, so trust the screen size
-    var land = window.innerWidth > window.innerHeight;
-    var sh = land ? Math.min(screen.width, screen.height) : Math.max(screen.width, screen.height);
-    if (sh > h) h = sh;
-  } $('app').style.height = h + 'px'; $('app').style.bottom = 'auto'; }
+ $('app').style.height = h + 'px'; $('app').style.bottom = 'auto'; }
 fitScreen(); window.addEventListener('resize', fitScreen);
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fitClock(); fitNums(); fitPrayer(); }); window.addEventListener('orientationchange', function () { setTimeout(fitScreen, 300); });
 setTimeout(function () { fitScreen(); fitClock(); fitNums(); fitPrayer(); }, 1000);
