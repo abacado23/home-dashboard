@@ -51,8 +51,8 @@
   #rings div { position: absolute; border-radius: 50%; border: 1px solid rgba(255,255,255,.18); }
 
   /* ---------- Layout ---------- */
-  #app { position: absolute; top: 0; left: 0; right: 0; bottom: 0; padding: 20px 20px 0;
-    display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; grid-template-rows: 318px auto 1fr 46px; grid-gap: 14px; }
+  #app { position: absolute; top: 0; left: 0; right: 0; bottom: 0; padding: 20px 20px 0; padding-top: calc(12px + env(safe-area-inset-top, 8px));
+    display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; grid-template-rows: 336px auto 1fr 26px; grid-gap: 14px; }
   #clockBox { grid-column: 1 / span 2; grid-row: 1; }
   #weather  { grid-column: 3; grid-row: 1; }
   #aqi      { grid-column: 4; grid-row: 1; }
@@ -66,9 +66,10 @@
     -webkit-backdrop-filter: blur(18px) saturate(140%); backdrop-filter: blur(18px) saturate(140%);
     box-shadow: 0 10px 30px rgba(60,20,0,.12); }
   .card.solid { background: var(--cream); color: var(--ink); border-color: rgba(255,255,255,.7); }
-  .label { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.72); margin-bottom: 8px; }
+  .label { font-size: 13px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.9); margin-bottom: 8px; }
+  .card:not(.solid) { text-shadow: 0 1px 3px rgba(60,20,0,.22); }
   .solid .label { color: var(--inkMuted); }
-  .stamp { position: absolute; right: 18px; top: 18px; font-size: 11px; color: rgba(255,255,255,.6); }
+  .stamp { display: none; position: absolute; right: 18px; top: 18px; font-size: 11px; color: rgba(255,255,255,.6); }
 
   /* Clock hero */
   #clockBox { padding: 26px 30px; }
@@ -79,34 +80,35 @@
   #date { font-size: 26px; font-weight: 500; margin-top: 14px; }
 
   /* Weather tile */
-  #wIcon { font-size: 46px; display: block; margin-top: 2px; }
-  #wTemp { font-size: 64px; font-weight: 600; letter-spacing: -2px; display: block; line-height: 1; margin-top: 6px; }
-  #wDesc { font-size: 18px; font-weight: 600; margin-top: 6px; }
-  .wl { font-size: 13px; color: rgba(255,255,255,.82); margin-top: 6px; line-height: 1.55; }
+  #wIcon { font-size: 58px; display: block; line-height: 1; margin-top: 8px; text-shadow: none; }
+  #wTemp { font-size: 104px; font-weight: 700; letter-spacing: -6px; display: block; line-height: .9; margin-top: 8px; margin-left: -4px; }
+  #wDesc { font-size: 21px; font-weight: 700; margin-top: 6px; }
+  .wl { font-size: 14px; font-weight: 600; color: #fff; margin-top: 8px; line-height: 1.45; }
 
   /* AQI tile — coloured by level */
   #aqi { border-color: rgba(255,255,255,.55); }
-  #aqi .label, #aqi .stamp { color: inherit; opacity: .72; }
-  #aqiNum { font-size: 82px; font-weight: 700; letter-spacing: -3px; line-height: 1; margin-top: 8px; }
-  #aqiCat { font-size: 17px; font-weight: 700; margin-top: 6px; }
-  #aqiAdvice { font-size: 14px; margin-top: 12px; line-height: 1.4; opacity: .9; }
-  #aqiTomorrow { font-size: 13px; margin-top: 10px; font-weight: 600; opacity: .75; }
+  #aqi .label, #aqi .stamp { color: inherit; opacity: .85; }
+  #aqi { text-shadow: none; }
+  #aqiNum { font-size: 112px; font-weight: 800; letter-spacing: -6px; line-height: .9; margin-top: 12px; margin-left: -3px; }
+  #aqiCat { font-size: 21px; font-weight: 800; margin-top: 10px; }
+  #aqiAdvice { font-size: 15px; font-weight: 600; margin-top: 10px; line-height: 1.35; max-width: 150px; }
+  #aqiTomorrow { font-size: 14px; margin-top: 8px; font-weight: 700; opacity: .85; max-width: 150px; }
   #aqiBar { display: none; }
-  #aqiFace { position: absolute; right: 12px; bottom: 10px; width: 92px; height: 92px; opacity: .9; }
+  #aqiFace { position: absolute; right: 10px; bottom: 10px; width: 78px; height: 78px; }
   #aqiFace svg { width: 100%; height: 100%; }
 
   /* Prayer */
   #prayer { padding: 14px 16px; }
   #prayerTop { display: -webkit-box; display: flex; -webkit-box-pack: justify; justify-content: space-between; }
-  #prayerNext { font-size: 13px; font-weight: 600; color: #fff; }
+  #prayerNext { font-size: 15px; font-weight: 700; color: #fff; }
   #prayerRow { display: -webkit-box; display: flex; }
   .pr { -webkit-box-flex: 1; flex: 1; text-align: center; padding: 8px 0; border-radius: 16px; margin-right: 6px; }
   .pr:last-child { margin-right: 0; }
-  .pr .n { font-size: 13px; color: rgba(255,255,255,.75); }
-  .pr .t { font-size: 21px; font-weight: 600; margin-top: 2px; }
+  .pr .n { font-size: 15px; font-weight: 600; color: #fff; }
+  .pr .t { font-size: 27px; font-weight: 700; margin-top: 2px; }
   .pr { border: 1.5px solid transparent; }
-  .pr.now { background: rgba(255,255,255,.3); border-color: rgba(255,255,255,.75); box-shadow: 0 4px 14px rgba(60,20,0,.15); }
-  .pr.now .n { color: #fff; font-weight: 700; }
+  .pr.now { text-shadow: none; background: var(--cream); color: var(--ink); border-color: rgba(255,255,255,.9); box-shadow: 0 4px 14px rgba(60,20,0,.18); }
+  .pr.now .n { color: var(--inkMuted); font-weight: 700; }
 
   /* Quote card */
   #quoteCard { display: -webkit-box; display: flex; -webkit-box-align: center; align-items: center; padding: 18px 22px; }
@@ -119,30 +121,30 @@
   .fakeCover .fr { width: 30px; height: 1px; background: rgba(255,255,255,.5); margin: 10px auto; }
   .fakeCover .fa { font-size: 9px; letter-spacing: .14em; text-transform: uppercase; opacity: .8; }
   #quoteText { -webkit-box-flex: 1; flex: 1; min-width: 0; }
-  #quote { font-family: Georgia, "Times New Roman", serif; font-size: 21px; line-height: 1.38; font-style: italic; color: #fff; }
-  #quote .by { font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; font-style: normal; font-size: 13px; font-weight: 600; color: rgba(255,255,255,.78); display: block; margin-top: 10px; letter-spacing: .02em; }
+  #quote { font-family: Georgia, "Times New Roman", serif; font-size: 23px; line-height: 1.38; font-style: italic; color: #fff; }
+  #quote .by { font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; font-style: normal; font-size: 13px; font-weight: 600; color: #fff; display: block; margin-top: 10px; letter-spacing: .02em; }
 
   /* Calendar / lists panel */
   #panel { display: -webkit-box; display: flex; -webkit-box-orient: vertical; flex-direction: column; min-height: 0; padding-bottom: 14px; }
   #tabs { display: -webkit-box; display: flex; margin-bottom: 12px; }
-  .tab { padding: 8px 15px; border-radius: 20px; font-size: 15px; font-weight: 600; color: #fff; margin-right: 6px; background: rgba(255,255,255,.18); }
+  .tab { padding: 9px 16px; border-radius: 20px; font-size: 16px; font-weight: 600; color: #fff; margin-right: 6px; background: rgba(255,255,255,.18); }
   .tab.on { background: var(--cream); color: var(--ink); }
   .tab .c { font-size: 12px; opacity: .65; margin-left: 4px; }
   #panelBody { -webkit-box-flex: 1; flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; min-height: 0; }
-  .day { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.7); margin: 10px 0 4px; }
+  .day { font-size: 13px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.9); margin: 10px 0 4px; }
   .day:first-child { margin-top: 0; }
   .ev { display: -webkit-box; display: flex; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,.16); }
-  .ev .et { width: 78px; font-size: 14px; color: rgba(255,255,255,.8); -webkit-flex-shrink: 0; flex-shrink: 0; padding-top: 1px; }
+  .ev .et { width: 84px; font-size: 16px; font-weight: 600; color: #fff; -webkit-flex-shrink: 0; flex-shrink: 0; padding-top: 1px; }
   .ev .dot { width: 9px; height: 9px; border-radius: 5px; margin: 5px 10px 0 0; -webkit-flex-shrink: 0; flex-shrink: 0; box-shadow: 0 0 0 2px rgba(255,255,255,.6); }
-  .ev .en { font-size: 16px; font-weight: 500; line-height: 1.3; }
+  .ev .en { font-size: 18px; font-weight: 600; line-height: 1.3; }
   .ev.past { opacity: .5; }
   .task { display: -webkit-box; display: flex; -webkit-box-align: center; align-items: center; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,.16); transition: opacity .4s; }
   .task .box { width: 26px; height: 26px; border-radius: 13px; border: 2px solid rgba(255,255,255,.7); margin-right: 12px; -webkit-flex-shrink: 0; flex-shrink: 0; }
-  .task .tt { font-size: 17px; font-weight: 500; }
+  .task .tt { font-size: 19px; font-weight: 600; }
   .task.done { opacity: .35; }
   .task.done .box { background: var(--cream); border-color: var(--cream); }
   .task.done .tt { text-decoration: line-through; }
-  .empty { color: rgba(255,255,255,.75); font-size: 15px; padding: 14px 0; }
+  .empty { color: #fff; font-size: 17px; font-weight: 500; padding: 14px 0; }
   #addRow { display: none; margin-top: 10px; }
   #addRow.show { display: -webkit-box; display: flex; }
   #addInput { -webkit-box-flex: 1; flex: 1; font-size: 17px; padding: 10px 14px; border-radius: 14px; border: 0; background: rgba(255,255,255,.22); color: #fff; outline: none; -webkit-appearance: none; }
@@ -154,10 +156,16 @@
   #refresh { position: absolute; right: 18px; top: 20px; font-size: 18px; color: rgba(255,255,255,.75); padding: 4px 6px; }
 
   /* News */
-  #news { display: -webkit-box; display: flex; -webkit-box-align: center; align-items: center; overflow: hidden; padding: 0 6px; }
-  #newsTag { font-size: 11px; font-weight: 800; letter-spacing: .1em; background: #fff; color: #b80000; padding: 4px 7px; border-radius: 5px; margin-right: 12px; -webkit-flex-shrink: 0; flex-shrink: 0; }
-  #newsText { font-size: 16px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: opacity .6s; text-shadow: 0 1px 6px rgba(80,20,0,.25); }
+  #news { display: -webkit-box; display: flex; -webkit-box-align: center; align-items: center; overflow: hidden; padding: 0 6px 6px; }
+  #newsTag { font-size: 10px; font-weight: 800; letter-spacing: .1em; background: #fff; color: #b80000; padding: 2px 6px; border-radius: 4px; margin-right: 12px; -webkit-flex-shrink: 0; flex-shrink: 0; }
+  #newsText { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: opacity .6s; text-shadow: 0 1px 6px rgba(80,20,0,.25); }
 
+  #mini { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #060608; color: #d8d0c4; display: none;
+    -webkit-box-orient: vertical; -webkit-box-pack: center; -webkit-box-align: center; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+  #mini.on { display: -webkit-box; display: flex; }
+  #miniTime { font-size: 230px; font-weight: 200; letter-spacing: -8px; line-height: 1; }
+  #miniTime .ampm { font-size: 40px; font-weight: 300; letter-spacing: 0; margin-left: 10px; color: #8a8378; }
+  #miniDate { font-size: 26px; font-weight: 400; color: #8a8378; margin-top: 18px; letter-spacing: .02em; }
   #dim { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #000; opacity: 0; pointer-events: none; transition: opacity 2s; }
   #dim.on { opacity: .72; pointer-events: auto; }
 
@@ -173,7 +181,7 @@
   #setupMsg { margin-top: 14px; color: #f2b06d; font-size: 15px; }
 
   @media (orientation: portrait) {
-    #app { grid-template-columns: 1fr 1fr; grid-template-rows: auto auto auto auto 1fr 46px; overflow-y: auto; }
+    #app { grid-template-columns: 1fr 1fr; grid-template-rows: auto auto auto auto 1fr 26px; overflow-y: auto; }
     #clockBox { grid-column: 1 / span 2; grid-row: 1; }
     #weather { grid-column: 1; grid-row: 2; } #aqi { grid-column: 2; grid-row: 2; }
     #prayer { grid-column: 1 / span 2; grid-row: 3; } #quoteCard { grid-column: 1 / span 2; grid-row: 4; }
@@ -195,8 +203,9 @@
   <div id="weather" class="card">
     <div class="label">Weather</div>
     <div class="stamp" id="wStamp"></div>
-    <span id="wIcon">·</span><span id="wTemp">--°</span>
+    <span id="wTemp">--°</span>
     <div id="wDesc"></div>
+    <span id="wIcon">·</span>
     <div class="wl" id="wMore"></div>
   </div>
 
@@ -235,6 +244,7 @@
   <div id="news"><span id="newsTag">BBC</span><span id="newsText"></span></div>
 </div>
 
+<div id="mini"><div id="miniTime"></div><div id="miniDate"></div></div>
 <div id="dim"></div>
 
 <div id="setup">
@@ -257,7 +267,8 @@ var SETTINGS = {
   lat: 31.5204, lon: 74.3587,            // Lahore
   theme: 'auto',                         // 'auto' follows the sun, or fix one: 'dawn', 'day', 'dusk', 'night'
   use24h: false,
-  nightStart: '23:30', nightEnd: '06:30', // screen dims between these times
+  minimalStart: '21:00', minimalEnd: '05:30', // just a clock on black between these times (tap to peek at the dashboard)
+  nightStart: '23:30', nightEnd: '06:30', // screen dims further between these times
   prayerMethod: 1,                        // 1 = Univ. of Islamic Sciences, Karachi
   prayerSchool: 1,                        // 1 = Hanafi Asr
   groceryQuickAdd: ['Milk', 'Eggs', 'Bread', 'Bananas', 'Coffee', 'Yoghurt', 'Fruit', 'Vegetables']
@@ -302,7 +313,7 @@ var QUOTES = [
 var $ = function (id) { return document.getElementById(id); };
 var CFG = { url: '', pw: '', demo: false };
 var state = { tab: 'calendar', events: [], lists: { todo: [], groceries: [] }, news: [], newsIdx: 0, prayer: null, prayerDate: '' };
-var lastTouch = Date.now(), dimLiftUntil = 0, bootTime = Date.now();
+var lastTouch = Date.now(), dimLiftUntil = 0, peekUntil = 0, bootTime = Date.now();
 
 function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
 function load(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }
@@ -371,7 +382,13 @@ function tickClock() {
   $('date').textContent = d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
   var start = new Date(d.getFullYear(), 0, 0), doy = Math.floor((d - start) / 864e5);
   showQuote(QUOTES[doy % QUOTES.length]);
-  var now = h * 60 + m, ns = hhmmToMin(SETTINGS.nightStart), ne = hhmmToMin(SETTINGS.nightEnd);
+  var now = h * 60 + m;
+  var inRange = function (a, b) { var x = hhmmToMin(a), y = hhmmToMin(b); return x > y ? (now >= x || now < y) : (now >= x && now < y); };
+  var minimal = inRange(SETTINGS.minimalStart, SETTINGS.minimalEnd) && Date.now() > peekUntil;
+  $('mini').className = minimal ? 'on' : '';
+  $('miniTime').innerHTML = $('time').innerHTML;
+  $('miniDate').textContent = $('date').textContent;
+  var ns = hhmmToMin(SETTINGS.nightStart), ne = hhmmToMin(SETTINGS.nightEnd);
   var night = ns > ne ? (now >= ns || now < ne) : (now >= ns && now < ne);
   $('dim').className = (night && Date.now() > dimLiftUntil) ? 'on' : '';
   // Fresh reload once a day at 4am to keep things snappy
@@ -420,6 +437,7 @@ function applyTheme() {
 }
 function hhmmToMin(s) { var p = s.split(':'); return +p[0] * 60 + +p[1]; }
 $('dim').addEventListener('click', function () { dimLiftUntil = Date.now() + 120e3; $('dim').className = ''; });
+$('mini').addEventListener('click', function () { peekUntil = Date.now() + 120e3; tickClock(); });   // tap: show dashboard for 2 minutes
 
 /* ---------- Weather (Open-Meteo, no key) ---------- */
 var WMO = {
@@ -444,8 +462,7 @@ function loadWeather() {
     var sr = j.daily.sunrise[0].slice(11, 16), ss = j.daily.sunset[0].slice(11, 16);
     sun.rise = sr; sun.set = ss; applyTheme();
     $('wMore').innerHTML = 'Feels ' + Math.round(c.apparent_temperature) + '° · H ' + Math.round(j.daily.temperature_2m_max[0]) +
-      '° L ' + Math.round(j.daily.temperature_2m_min[0]) + '°<br>Humidity ' + c.relative_humidity_2m + '% · Wind ' + Math.round(c.wind_speed_10m) +
-      ' km/h<br>Sunrise ' + fmtTime(hhmmToDate(sr)).replace(/am|pm/, '') + ' \u00b7 Sunset ' + fmtTime(hhmmToDate(ss)).replace(/am|pm/, '');
+      '° L ' + Math.round(j.daily.temperature_2m_min[0]) + '°<br>Humidity ' + c.relative_humidity_2m + '%<br>Sunrise ' + fmtTime(hhmmToDate(sr)).replace(/am|pm/, '') + ' \u00b7 Sunset ' + fmtTime(hhmmToDate(ss)).replace(/am|pm/, '');
 
     stamp('wStamp');
   });
