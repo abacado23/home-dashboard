@@ -7,6 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Home">
 <title>Home</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&display=swap">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html, body { height: 100%; overflow: hidden; color: #fff;
@@ -52,7 +53,7 @@
 
   /* ---------- Layout ---------- */
   #app { position: fixed; top: 0; left: 0; right: 0; bottom: 0; padding: 20px 20px 6px; padding-top: calc(12px + env(safe-area-inset-top, 8px));
-    display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; grid-template-rows: 336px auto 1fr 26px; grid-gap: 14px; }
+    display: grid; grid-template-columns: 1.22fr 1.22fr 1fr 1fr; grid-template-rows: 47% auto 1fr 26px; grid-gap: 14px; }
   #clockBox { grid-column: 1 / span 2; grid-row: 1; }
   #weather  { grid-column: 3; grid-row: 1; }
   #aqi      { grid-column: 4; grid-row: 1; }
@@ -61,6 +62,8 @@
   #panel    { grid-column: 3 / span 2; grid-row: 2 / span 2; }
   #news     { grid-column: 1 / span 4; grid-row: 4; }
 
+  /* Tall, condensed numbers (built into iPad and Mac) */
+  .num, #time .dg, #wTemp, #aqiNum, #miniTime .dg { font-family: Anton, "HelveticaNeue-CondensedBlack", "Helvetica Neue Condensed Black", "DejaVu Sans Condensed", sans-serif; font-weight: 400; }
   .card { border-radius: 26px; padding: 18px 20px; position: relative; overflow: hidden;
     background: rgba(255,255,255,.17); border: 1px solid rgba(255,255,255,.32);
     -webkit-backdrop-filter: blur(18px) saturate(140%); backdrop-filter: blur(18px) saturate(140%);
@@ -72,16 +75,16 @@
   .stamp { display: none; position: absolute; right: 18px; top: 18px; font-size: 11px; color: rgba(255,255,255,.6); }
 
   /* Clock hero */
-  #clockBox { padding: 26px 30px; }
+  #clockBox { padding: 22px 26px; }
   #clockBox { display: -webkit-box; display: flex; -webkit-box-orient: vertical; flex-direction: column; -webkit-box-pack: center; justify-content: center; }
-  #time { font-size: 168px; font-weight: 600; letter-spacing: -7px; line-height: .9; margin-left: -6px; white-space: nowrap; }
-  #time.long { font-size: 140px; letter-spacing: -6px; }
-  #time .ampm { font-size: 30px; font-weight: 500; letter-spacing: 0; margin-left: 8px; color: var(--inkMuted); }
-  #date { font-size: 26px; font-weight: 500; margin-top: 14px; }
+  #time { font-size: 168px; font-weight: 700; letter-spacing: -.02em; line-height: .86; margin-left: -.03em; white-space: nowrap; }
+  #time .ampm { position: absolute; top: 20px; right: 24px; font-size: 22px; font-weight: 700; letter-spacing: .06em; line-height: 1; color: var(--inkMuted); }
+  #miniTime .ampm { position: static; }
+  #date { font-size: 28px; font-weight: 600; margin-top: 6px; }
 
   /* Weather tile */
   #wIcon { font-size: 58px; display: block; line-height: 1; margin-top: 8px; text-shadow: none; }
-  #wTemp { font-size: 104px; font-weight: 700; letter-spacing: -6px; display: block; line-height: .9; margin-top: 8px; margin-left: -4px; }
+  #wTemp { font-size: 132px; font-weight: 700; letter-spacing: -.02em; display: inline-block; white-space: nowrap; line-height: .86; margin-top: 8px; margin-left: -4px; }
   #wDesc { font-size: 21px; font-weight: 700; margin-top: 6px; }
   .wl { font-size: 14px; font-weight: 600; color: #fff; margin-top: 8px; line-height: 1.45; }
 
@@ -89,7 +92,7 @@
   #aqi { border-color: rgba(255,255,255,.55); }
   #aqi .label, #aqi .stamp { color: inherit; opacity: .85; }
   #aqi { text-shadow: none; }
-  #aqiNum { font-size: 112px; font-weight: 800; letter-spacing: -6px; line-height: .9; margin-top: 12px; margin-left: -3px; }
+  #aqiNum { display: inline-block; white-space: nowrap; font-size: 140px; font-weight: 700; letter-spacing: -.02em; line-height: .86; margin-top: 12px; margin-left: -3px; }
   #aqiCat { font-size: 21px; font-weight: 800; margin-top: 10px; }
   #aqiAdvice { font-size: 15px; font-weight: 600; margin-top: 10px; line-height: 1.35; max-width: 150px; }
   #aqiTomorrow { font-size: 14px; margin-top: 8px; font-weight: 700; opacity: .85; max-width: 150px; }
@@ -163,9 +166,10 @@
   #mini { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #060608; color: #d8d0c4; display: none;
     -webkit-box-orient: vertical; -webkit-box-pack: center; -webkit-box-align: center; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
   #mini.on { display: -webkit-box; display: flex; }
-  #miniTime { font-size: 230px; font-weight: 200; letter-spacing: -8px; line-height: 1; }
+  #miniTime { font-size: 300px; font-weight: 500; letter-spacing: -.02em; line-height: 1; }
   #miniTime .ampm { font-size: 40px; font-weight: 300; letter-spacing: 0; margin-left: 10px; color: #8a8378; }
   #miniDate { font-size: 26px; font-weight: 400; color: #8a8378; margin-top: 18px; letter-spacing: .02em; }
+  #ver { margin-left: auto; padding-left: 12px; font-size: 10px; opacity: .45; -webkit-flex-shrink: 0; flex-shrink: 0; }
   #dim { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #000; opacity: 0; pointer-events: none; transition: opacity 2s; }
   #dim.on { opacity: .72; pointer-events: auto; }
 
@@ -187,6 +191,54 @@
     #prayer { grid-column: 1 / span 2; grid-row: 3; } #quoteCard { grid-column: 1 / span 2; grid-row: 4; }
     #panel { grid-column: 1 / span 2; grid-row: 5; } #news { grid-column: 1 / span 2; grid-row: 6; }
   }
+
+  /* ===== Glanceable layout (v11) ===== */
+  body.t-dawn  { --wbox: #c9566f; }
+  body.t-day   { --wbox: #d8701f; }
+  body.t-dusk  { --wbox: #5a4fc4; }
+  body.t-night { --wbox: #2e3f88; }
+  #app { grid-template-columns: 1.55fr 1fr; grid-template-rows: 58% 1fr 26px; }
+  #clockBox { grid-column: 1; grid-row: 1; }
+  #glance   { grid-column: 2; grid-row: 1; display: grid; grid-template-rows: 1fr 1fr; grid-gap: 14px; min-height: 0; }
+  #prayer   { grid-column: 1; grid-row: 2; }
+  #panel    { grid-column: 2; grid-row: 2; }
+  #news     { grid-column: 1 / span 2; grid-row: 3; }
+  #time { font-weight: 400; letter-spacing: 0; line-height: .9; }
+  .box { position: relative; border-radius: 26px; padding: 14px 22px 16px; color: #fff; overflow: hidden;
+    box-shadow: 0 10px 30px rgba(60,20,0,.18); border: 1px solid rgba(255,255,255,.35); }
+  #weather, #aqi { grid-column: auto; grid-row: auto; min-height: 0; }
+  #weather { background: var(--wbox); }
+  .bigNum { display: inline-block; white-space: nowrap; font-size: 120px; line-height: 1.05; letter-spacing: 0; font-weight: 400; margin: 0; }
+  .boxIcon { position: absolute; right: 18px; top: 50%; margin-top: -48px; width: 96px; height: 96px; font-size: 80px; line-height: 96px; text-align: center; }
+  #aqiFace { right: 14px; bottom: auto; }
+  #aqiFace svg { width: 96px; height: 96px; }
+  .desc { position: absolute; left: 22px; bottom: 16px; font-size: 24px; font-weight: 700; }
+  #wIcon { margin-top: -48px; }
+  /* prayer: big and clear */
+  #prayer { padding: 18px 20px; display: -webkit-box; display: flex; -webkit-box-orient: vertical; flex-direction: column; }
+  #prayerTop { margin-bottom: 6px; }
+  #prayerNext { font-size: 18px; }
+  #prayerRow { -webkit-box-flex: 1; flex: 1; -webkit-box-align: center; align-items: center; }
+  .pr { padding: 14px 0 12px !important; }
+  .pr { min-width: 0; display: -webkit-box; display: flex; -webkit-box-orient: vertical; flex-direction: column; -webkit-box-pack: center; justify-content: center; padding: 6px 0; border-radius: 20px; }
+  .pr .n { font-size: 19px; }
+  .pr .t { font-family: Anton, "HelveticaNeue-CondensedBlack", "DejaVu Sans Condensed", sans-serif; font-weight: 400; font-size: 52px; line-height: 1.1; margin-top: 4px; white-space: nowrap; }
+  /* full-screen quote */
+  #quoteFull { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--cream); color: var(--ink); opacity: 0; pointer-events: none;
+    transition: opacity 1.5s ease; display: -webkit-box; display: flex; -webkit-box-align: center; align-items: center; -webkit-box-pack: center; justify-content: center; padding: 60px 80px; }
+  #quoteFull.on { opacity: 1; pointer-events: auto; }
+  #qInner { display: -webkit-box; display: flex; -webkit-box-align: center; align-items: center; max-width: 900px; }
+  #quoteFull #cover { width: 210px; height: 315px; margin-right: 54px; border-radius: 8px; box-shadow: 0 24px 50px rgba(40,10,0,.3); }
+  #quoteFull .fakeCover .ft { font-size: 26px; }
+  #quoteFull .fakeCover .fa { font-size: 13px; }
+  #qLabel { font-size: 14px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--inkMuted); margin-bottom: 18px; }
+  #quoteFull #quote { font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: 44px; line-height: 1.3; color: var(--ink); }
+  #quoteFull #quote .by { font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; font-style: normal; font-size: 20px; font-weight: 600; color: var(--inkMuted); margin-top: 22px; }
+  @media (orientation: portrait) {
+    #app { grid-template-columns: 1fr; grid-template-rows: 30% 22% auto 1fr 26px; }
+    #clockBox { grid-column: 1; grid-row: 1; } #glance { grid-column: 1; grid-row: 2; grid-template-rows: 1fr; grid-template-columns: 1fr 1fr; }
+    #prayer { grid-column: 1; grid-row: 3; } #panel { grid-column: 1; grid-row: 4; } #news { grid-column: 1; grid-row: 5; }
+  }
 </style>
 </head>
 <body>
@@ -200,24 +252,17 @@
     <div id="date"></div>
   </div>
 
-  <div id="weather" class="card">
-    <div class="label">Weather</div>
-    <div class="stamp" id="wStamp"></div>
-    <span id="wTemp">--°</span>
-    <div id="wDesc"></div>
-    <span id="wIcon">·</span>
-    <div class="wl" id="wMore"></div>
-  </div>
-
-  <div id="aqi" class="card">
-    <div id="aqiBar"></div>
-    <div class="label">Air quality</div>
-    <div class="stamp" id="aStamp"></div>
-    <div id="aqiFace"></div>
-    <div id="aqiNum">--</div>
-    <div id="aqiCat"></div>
-    <div id="aqiAdvice"></div>
-    <div id="aqiTomorrow"></div>
+  <div id="glance">
+    <div id="weather" class="box">
+      <div class="bigNum num" id="wTemp">--°</div>
+      <div class="boxIcon" id="wIcon"></div>
+      <div class="desc" id="wDesc"></div>
+    </div>
+    <div id="aqi" class="box">
+      <div class="bigNum num" id="aqiNum">--</div>
+      <div class="boxIcon" id="aqiFace"></div>
+      <div class="desc" id="aqiCat"></div>
+    </div>
   </div>
 
   <div id="prayer" class="card">
@@ -225,10 +270,8 @@
     <div id="prayerRow"></div>
   </div>
 
-  <div id="quoteCard" class="card">
-    <div id="cover"></div>
-    <div id="quoteText"><div class="label">Quote of the day</div><div id="quote"></div></div>
-  </div>
+  <!-- details kept for later use, not shown -->
+  <div style="display:none"><span id="wStamp"></span><span id="aStamp"></span><span id="wMore"></span><span id="aqiAdvice"></span><span id="aqiTomorrow"></span><span id="aqiBar"></span></div>
 
   <div id="panel" class="card">
     <div id="refresh" title="Refresh">&#8635;</div>
@@ -241,9 +284,10 @@
     </div>
   </div>
 
-  <div id="news"><span id="newsTag">BBC</span><span id="newsText"></span></div>
+  <div id="news"><span id="newsTag">BBC</span><span id="newsText"></span><span id="ver">v11</span></div>
 </div>
 
+<div id="quoteFull"><div id="qInner"><div id="cover"></div><div id="quoteText"><div id="qLabel">Quote of the day</div><div id="quote"></div></div></div></div>
 <div id="mini"><div id="miniTime"></div><div id="miniDate"></div></div>
 <div id="dim"></div>
 
@@ -268,6 +312,7 @@ var SETTINGS = {
   theme: 'auto',                         // 'auto' follows the sun, or fix one: 'dawn', 'day', 'dusk', 'night'
   use24h: false,
   minimalStart: '21:00', minimalEnd: '05:30', // just a clock on black between these times (tap to peek at the dashboard)
+  quoteEvery: 20, quoteSeconds: 30,       // show the quote full-screen every 20 minutes, for 30 seconds
   nightStart: '23:30', nightEnd: '06:30', // screen dims further between these times
   prayerMethod: 1,                        // 1 = Univ. of Islamic Sciences, Karachi
   prayerSchool: 1,                        // 1 = Hanafi Asr
@@ -375,10 +420,9 @@ $('sDemo').onclick = function () { location.hash = 'demo=1'; location.reload(); 
 /* ---------- Clock, date, quote, night dim ---------- */
 function tickClock() {
   var d = new Date(), h = d.getHours(), m = d.getMinutes();
-  var hh = SETTINGS.use24h ? h : ((h % 12) || 12);
-  $('time').className = hh >= 10 ? 'long' : '';
-  $('time').innerHTML = SETTINGS.use24h ? pad(h) + ':' + pad(m)
-    : ((h % 12) || 12) + ':' + pad(m) + '<span class="ampm">' + (h < 12 ? 'AM' : 'PM') + '</span>';
+  var tHtml = '<span class="dg">' + (SETTINGS.use24h ? pad(h) : ((h % 12) || 12)) + ':' + pad(m) + '</span>' +
+    (SETTINGS.use24h ? '' : '<span class="ampm">' + (h < 12 ? 'AM' : 'PM') + '</span>');
+  if ($('time').innerHTML !== tHtml) { $('time').innerHTML = tHtml; fitClock(); }
   $('date').textContent = d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
   var start = new Date(d.getFullYear(), 0, 0), doy = Math.floor((d - start) / 864e5);
   showQuote(QUOTES[doy % QUOTES.length]);
@@ -395,6 +439,33 @@ function tickClock() {
   if (h === 4 && m === 0 && Date.now() - bootTime > 3600e3) location.reload();
   updatePrayerHighlight();
   applyTheme();
+}
+// Make the clock as big as its card allows
+function fitClock() {
+  var box = $('clockBox'), t = $('time'), dg = t.querySelector('.dg'), ap = t.querySelector('.ampm');
+  if (!dg || !box.clientWidth) return;
+  t.style.fontSize = '100px';
+  var availW = box.clientWidth - 48;
+  var availH = box.clientHeight - 44 - $('date').offsetHeight - 10;
+  var size = Math.min(100 * availW / dg.offsetWidth, availH / 0.86);
+  t.style.fontSize = Math.floor(size) + 'px';
+}
+// Big numbers shrink only if they would overflow their tile
+function fitNum(el, maxPx) {
+  var card = el.parentNode; if (!card.clientWidth) return;
+  el.style.fontSize = '100px';
+  var availW = card.clientWidth - 44 - 110;          // leave room for the icon
+  var availH = (card.clientHeight - 56) / 1.05;      // leave room for the description
+  el.style.fontSize = Math.floor(Math.min(maxPx, availH, 100 * availW / el.offsetWidth)) + 'px';
+}
+function fitNums() { fitNum($('wTemp'), 170); fitNum($('aqiNum'), 170); }
+window.addEventListener('resize', function () { setTimeout(function () { fitClock(); fitNums(); }, 50); });
+function fitPrayer() {
+  var cells = document.querySelectorAll('.pr .t'); if (!cells.length) return;
+  for (var i = 0; i < cells.length; i++) cells[i].style.fontSize = '52px';
+  var colW = cells[0].parentNode.clientWidth - 12, widest = 0;
+  for (var k = 0; k < cells.length; k++) widest = Math.max(widest, cells[k].offsetWidth);
+  if (widest > colW) for (var j = 0; j < cells.length; j++) cells[j].style.fontSize = Math.floor(52 * colW / widest) + 'px';
 }
 var shownQuote = null;
 function showQuote(q) {
@@ -457,7 +528,7 @@ function loadWeather() {
   return getJSON(u).then(function (j) {
     var c = j.current, w = wmo(c.weather_code, c.is_day);
     $('wIcon').textContent = w.icon;
-    $('wTemp').textContent = Math.round(c.temperature_2m) + '°';
+    $('wTemp').textContent = Math.round(c.temperature_2m) + '°'; fitNum($('wTemp'), 170);
     $('wDesc').textContent = w.text;
     var sr = j.daily.sunrise[0].slice(11, 16), ss = j.daily.sunset[0].slice(11, 16);
     sun.rise = sr; sun.set = ss; applyTheme();
@@ -472,7 +543,7 @@ function loadWeather() {
 var AQI_LEVELS = [
   [50, 'Good', '#7fd38c', 'Clean air \u2014 open the windows.', '#123b1c'],
   [100, 'Moderate', '#f4dc63', 'Fine for most people.', '#3d3105'],
-  [150, 'Unhealthy for sensitive groups', '#ffad5c', 'Go easy on long outdoor exercise.', '#4a2300'],
+  [150, 'Unhealthy (sensitive)', '#ffad5c', 'Go easy on long outdoor exercise.', '#4a2300'],
   [200, 'Unhealthy', '#f0605d', 'Keep windows shut. Mask up outdoors.', '#ffffff'],
   [300, 'Very unhealthy', '#9b5de0', 'Stay in, purifier on. N95 if you go out.', '#ffffff'],
   [9999, 'Hazardous', '#8c1d40', 'Avoid going out. N95 if you must.', '#ffffff']
@@ -500,7 +571,7 @@ function aqiLevel(v) { for (var i = 0; i < AQI_LEVELS.length; i++) if (v <= AQI_
 function loadAqi() {
   return api('aqi').then(function (j) {
     var lv = aqiLevel(j.aqi);
-    $('aqiNum').textContent = j.aqi;
+    $('aqiNum').textContent = j.aqi; fitNum($('aqiNum'), 170);
     $('aqi').style.background = lv[2];
     $('aqi').style.color = lv[4];
     $('aqiCat').textContent = lv[1];
@@ -548,7 +619,7 @@ function updatePrayerHighlight(force) {
   if (cur === 0 && state.prayer.Sunrise && now >= hhmmToDate(state.prayer.Sunrise)) cur = -1; // Fajr time is over after sunrise
   var html = '';
   for (var k = 0; k < 5; k++) html += '<div class="pr' + (k === cur ? ' now' : '') + '"><div class="n">' + PRAYERS[k][1] + '</div><div class="t">' + fmtTime(times[k]).replace(/(am|pm)$/, '') + '</div></div>';
-  if (force || $('prayerRow').innerHTML !== html) $('prayerRow').innerHTML = html;
+  if (force || $('prayerRow').innerHTML !== html) { $('prayerRow').innerHTML = html; fitPrayer(); }
   var mins = Math.round((nextTime - now) / 6e4), hh = Math.floor(mins / 60), mm = mins % 60;
   $('prayerNext').textContent = 'Next \u00b7 ' + PRAYERS[next][1] + ' in ' + (hh ? hh + 'h ' : '') + mm + 'm';
 }
@@ -644,6 +715,15 @@ setInterval(function () {
 function retryLater(fn) { return function () { setTimeout(function () { fn().catch(retryLater(fn)); }, 5 * 60e3); }; }
 function every(fn, mins) { fn().catch(retryLater(fn)); setInterval(function () { fn().catch(function () {}); }, mins * 60e3); }
 
+var quoteTimer = null;
+function showQuoteFull() {
+  if ($('mini').className === 'on' || Date.now() - lastTouch < 60e3 || document.activeElement === $('addInput')) return;
+  $('quoteFull').className = 'on';
+  clearTimeout(quoteTimer);
+  quoteTimer = setTimeout(function () { $('quoteFull').className = ''; }, SETTINGS.quoteSeconds * 1000);
+}
+$('quoteFull').addEventListener('click', function () { clearTimeout(quoteTimer); $('quoteFull').className = ''; });
+
 function start() {
   tickClock(); setInterval(tickClock, 10e3);
   renderPanel();
@@ -655,6 +735,9 @@ function start() {
   setInterval(showHeadline, 15e3);
   every(loadCalendar, 60);
   every(loadTasks, 10);
+  setInterval(showQuoteFull, SETTINGS.quoteEvery * 60e3);
+  if (/quote=1/.test(location.hash)) { lastTouch = 0; setTimeout(showQuoteFull, 800); }
+  setTimeout(fitNums, 300);
 }
 
 /* ---------- Sample data for preview ---------- */
@@ -685,9 +768,16 @@ applyTheme();
 setTimeout(function () { document.body.className += ' ready'; }, 1500);
 // Old iOS can report the wrong page height in home-screen mode, leaving a gap at the bottom.
 // Size the layout to the real visible screen instead.
-function fitScreen() { var h = window.innerHeight || document.documentElement.clientHeight; $('app').style.height = h + 'px'; $('app').style.bottom = 'auto'; }
-fitScreen(); window.addEventListener('resize', fitScreen); window.addEventListener('orientationchange', function () { setTimeout(fitScreen, 300); });
-setTimeout(fitScreen, 1000);
+function fitScreen() {
+  var h = window.innerHeight || document.documentElement.clientHeight;
+  if (navigator.standalone) {   // home-screen app always fills the whole screen, so trust the screen size
+    var land = window.innerWidth > window.innerHeight;
+    var sh = land ? Math.min(screen.width, screen.height) : Math.max(screen.width, screen.height);
+    if (sh > h) h = sh;
+  } $('app').style.height = h + 'px'; $('app').style.bottom = 'auto'; }
+fitScreen(); window.addEventListener('resize', fitScreen);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitClock); window.addEventListener('orientationchange', function () { setTimeout(fitScreen, 300); });
+setTimeout(function () { fitScreen(); fitClock(); fitNums(); fitPrayer(); }, 1000);
 if (readConfig()) start(); else { tickClock(); showSetup(); }
 </script>
 </body>
