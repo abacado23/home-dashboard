@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Home">
+<title>Home</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; overflow: hidden; color: #fff;
+    font-family: -apple-system, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+
+  /* ---------- Themes (change with the time of day) ---------- */
+  body { background: #d9782c; }
+  .bg { position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0; }
+  .bg.on { opacity: 1; }
+  body.ready .bg { transition: opacity 90s linear; }
+  #bg-dawn { background-color: #f0a29c; background-image:
+      radial-gradient(circle at 18% 12%, rgba(255,226,190,.95) 0, rgba(255,226,190,0) 38%),
+      radial-gradient(circle at 92% 8%, rgba(255,196,214,.85) 0, rgba(255,196,214,0) 30%),
+      radial-gradient(circle at 70% 115%, rgba(130,80,160,.85) 0, rgba(130,80,160,0) 48%),
+      radial-gradient(circle at 105% 70%, rgba(214,104,128,.85) 0, rgba(214,104,128,0) 40%),
+      linear-gradient(160deg, #ffd0a6 0%, #f39a9d 50%, #a56aa6 100%); }
+  #bg-day { background-color: #d9782c; background-image:
+      radial-gradient(circle at 18% 12%, rgba(255,214,120,.95) 0, rgba(255,214,120,0) 38%),
+      radial-gradient(circle at 92% 8%, rgba(255,200,95,.9) 0, rgba(255,200,95,0) 30%),
+      radial-gradient(circle at 70% 115%, rgba(150,40,25,.95) 0, rgba(150,40,25,0) 48%),
+      radial-gradient(circle at 105% 70%, rgba(120,30,25,.9) 0, rgba(120,30,25,0) 40%),
+      linear-gradient(160deg, #f0b04d 0%, #e08a35 45%, #b9512a 100%); }
+  #bg-dusk { background-color: #4b4aa8; background-image:
+      radial-gradient(circle at 15% 10%, rgba(140,190,255,.9) 0, rgba(140,190,255,0) 38%),
+      radial-gradient(circle at 95% 5%, rgba(255,160,200,.75) 0, rgba(255,160,200,0) 30%),
+      radial-gradient(circle at 75% 115%, rgba(40,20,90,.95) 0, rgba(40,20,90,0) 50%),
+      radial-gradient(circle at 105% 65%, rgba(120,60,170,.9) 0, rgba(120,60,170,0) 40%),
+      linear-gradient(160deg, #7c9be8 0%, #6a5fc9 50%, #3b2a7a 100%); }
+  #bg-night { background-color: #141a3a; background-image:
+      radial-gradient(circle at 15% 10%, rgba(74,96,180,.75) 0, rgba(74,96,180,0) 38%),
+      radial-gradient(circle at 95% 5%, rgba(120,84,176,.55) 0, rgba(120,84,176,0) 30%),
+      radial-gradient(circle at 75% 115%, rgba(4,6,22,.95) 0, rgba(4,6,22,0) 50%),
+      radial-gradient(circle at 105% 65%, rgba(28,40,104,.9) 0, rgba(28,40,104,0) 40%),
+      linear-gradient(160deg, #2c3c7e 0%, #1a2152 50%, #0a0d24 100%); }
+  body.t-dawn .card:not(.solid) { background: rgba(120,30,70,.14); }
+  body.t-dawn  { --cream: #fff6f1; --ink: #3a1d26; --inkMuted: #9a6f7a; --cover1: #8e3f5c; --cover2: #4a1c30; }
+  body.t-day   { --cream: #fdf7ec; --ink: #2a1d12; --inkMuted: #8a7360; --cover1: #7a2e1c; --cover2: #3e1710; }
+  body.t-dusk  { --cream: #f6f4ff; --ink: #1d1a38; --inkMuted: #6f6a95; --cover1: #3b2f8a; --cover2: #1b1545; }
+  body.t-night { --cream: #eef1fb; --ink: #141a33; --inkMuted: #5d6788; --cover1: #24306a; --cover2: #0d1230; }
+  /* soft decorative rings, like the reference */
+  #rings { position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; }
+  #rings div { position: absolute; border-radius: 50%; border: 1px solid rgba(255,255,255,.18); }
+
+  /* ---------- Layout ---------- */
+  #app { position: absolute; top: 0; left: 0; right: 0; bottom: 0; padding: 20px 20px 0;
+    display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; grid-template-rows: 318px auto 1fr 46px; grid-gap: 14px; }
+  #clockBox { grid-column: 1 / span 2; grid-row: 1; }
+  #weather  { grid-column: 3; grid-row: 1; }
+  #aqi      { grid-column: 4; grid-row: 1; }
+  #prayer   { grid-column: 1 / span 2; grid-row: 2; }
+  #quoteCard { grid-column: 1 / span 2; grid-row: 3; }
+  #panel    { grid-column: 3 / span 2; grid-row: 2 / span 2; }
+  #news     { grid-column: 1 / span 4; grid-row: 4; }
+
+  .card { border-radius: 26px; padding: 18px 20px; position: relative; overflow: hidden;
+    background: rgba(255,255,255,.17); border: 1px solid rgba(255,255,255,.32);
+    -webkit-backdrop-filter: blur(18px) saturate(140%); backdrop-filter: blur(18px) saturate(140%);
+    box-shadow: 0 10px 30px rgba(60,20,0,.12); }
+  .card.solid { background: var(--cream); color: var(--ink); border-color: rgba(255,255,255,.7); }
+  .label { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.72); margin-bottom: 8px; }
+  .solid .label { color: var(--inkMuted); }
+  .stamp { position: absolute; right: 18px; top: 18px; font-size: 11px; color: rgba(255,255,255,.6); }
+
+  /* Clock hero */
+  #clockBox { padding: 26px 30px; }
+  #clockBox { display: -webkit-box; display: flex; -webkit-box-orient: vertical; flex-direction: column; -webkit-box-pack: center; justify-content: center; }
+  #time { font-size: 168px; font-weight: 600; letter-spacing: -7px; line-height: .9; margin-left: -6px; white-space: nowrap; }
+  #time.long { font-size: 140px; letter-spacing: -6px; }
+  #time .ampm { font-size: 30px; font-weight: 500; letter-spacing: 0; margin-left: 8px; color: var(--inkMuted); }
+  #date { font-size: 26px; font-weight: 500; margin-top: 14px; }
+
+  /* Weather tile */
+  #wIcon { font-size: 46px; display: block; margin-top: 2px; }
+  #wTemp { font-size: 64px; font-weight: 600; letter-spacing: -2px; display: block; line-height: 1; margin-top: 6px; }
+  #wDesc { font-size: 18px; font-weight: 600; margin-top: 6px; }
+  .wl { font-size: 13px; color: rgba(255,255,255,.82); margin-top: 6px; line-height: 1.55; }
+
+  /* AQI tile — coloured by level */
+  #aqi { border-color: rgba(255,255,255,.55); }
+  #aqi .label, #aqi .stamp { color: inherit; opacity: .72; }
+  #aqiNum { font-size: 82px; font-weight: 700; letter-spacing: -3px; line-height: 1; margin-top: 8px; }
+  #aqiCat { font-size: 17px; font-weight: 700; margin-top: 6px; }
+  #aqiAdvice { font-size: 14px; margin-top: 12px; line-height: 1.4; opacity: .9; }
+  #aqiTomorrow { font-size: 13px; margin-top: 10px; font-weight: 600; opacity: .75; }
+  #aqiBar { display: none; }
+  #aqiFace { position: absolute; right: 12px; bottom: 10px; width: 92px; height: 92px; opacity: .9; }
+  #aqiFace svg { width: 100%; height: 100%; }
+
+  /* Prayer */
+  #prayer { padding: 14px 16px; }
+  #prayerTop { display: -webkit-box; display: flex; -webkit-box-pack: justify; justify-content: space-between; }
+  #prayerNext { font-size: 13px; font-weight: 600; color: #fff; }
+  #prayerRow { display: -webkit-box; display: flex; }
+  .pr { -webkit-box-flex: 1; flex: 1; text-align: center; padding: 8px 0; border-radius: 16px; margin-right: 6px; }
+  .pr:last-child { margin-right: 0; }
+  .pr .n { font-size: 13px; color: rgba(255,255,255,.75); }
+  .pr .t { font-size: 21px; font-weight: 600; margin-top: 2px; }
+  .pr { border: 1.5px solid transparent; }
+  .pr.now { background: rgba(255,255,255,.3); border-color: rgba(255,255,255,.75); box-shadow: 0 4px 14px rgba(60,20,0,.15); }
+  .pr.now .n { color: #fff; font-weight: 700; }
+
+  /* Quote card */
+  #quoteCard { display: -webkit-box; display: flex; -webkit-box-align: center; align-items: center; padding: 18px 22px; }
+  #cover { width: 104px; height: 156px; -webkit-flex-shrink: 0; flex-shrink: 0; margin-right: 22px; border-radius: 6px; overflow: hidden;
+    box-shadow: 0 12px 26px rgba(40,10,0,.35), 0 0 0 1px rgba(255,255,255,.25); background: #8a3b22; }
+  #cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .fakeCover { width: 100%; height: 100%; padding: 14px 10px; text-align: center; color: #fdf7ec;
+    background: linear-gradient(160deg, var(--cover1), var(--cover2)); display: -webkit-box; display: flex; -webkit-box-orient: vertical; flex-direction: column; -webkit-box-pack: center; justify-content: center; }
+  .fakeCover .ft { font-family: Georgia, "Times New Roman", serif; font-size: 15px; line-height: 1.2; font-style: italic; }
+  .fakeCover .fr { width: 30px; height: 1px; background: rgba(255,255,255,.5); margin: 10px auto; }
+  .fakeCover .fa { font-size: 9px; letter-spacing: .14em; text-transform: uppercase; opacity: .8; }
+  #quoteText { -webkit-box-flex: 1; flex: 1; min-width: 0; }
+  #quote { font-family: Georgia, "Times New Roman", serif; font-size: 21px; line-height: 1.38; font-style: italic; color: #fff; }
+  #quote .by { font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; font-style: normal; font-size: 13px; font-weight: 600; color: rgba(255,255,255,.78); display: block; margin-top: 10px; letter-spacing: .02em; }
+
+  /* Calendar / lists panel */
+  #panel { display: -webkit-box; display: flex; -webkit-box-orient: vertical; flex-direction: column; min-height: 0; padding-bottom: 14px; }
+  #tabs { display: -webkit-box; display: flex; margin-bottom: 12px; }
+  .tab { padding: 8px 15px; border-radius: 20px; font-size: 15px; font-weight: 600; color: #fff; margin-right: 6px; background: rgba(255,255,255,.18); }
+  .tab.on { background: var(--cream); color: var(--ink); }
+  .tab .c { font-size: 12px; opacity: .65; margin-left: 4px; }
+  #panelBody { -webkit-box-flex: 1; flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; min-height: 0; }
+  .day { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.7); margin: 10px 0 4px; }
+  .day:first-child { margin-top: 0; }
+  .ev { display: -webkit-box; display: flex; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,.16); }
+  .ev .et { width: 78px; font-size: 14px; color: rgba(255,255,255,.8); -webkit-flex-shrink: 0; flex-shrink: 0; padding-top: 1px; }
+  .ev .dot { width: 9px; height: 9px; border-radius: 5px; margin: 5px 10px 0 0; -webkit-flex-shrink: 0; flex-shrink: 0; box-shadow: 0 0 0 2px rgba(255,255,255,.6); }
+  .ev .en { font-size: 16px; font-weight: 500; line-height: 1.3; }
+  .ev.past { opacity: .5; }
+  .task { display: -webkit-box; display: flex; -webkit-box-align: center; align-items: center; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,.16); transition: opacity .4s; }
+  .task .box { width: 26px; height: 26px; border-radius: 13px; border: 2px solid rgba(255,255,255,.7); margin-right: 12px; -webkit-flex-shrink: 0; flex-shrink: 0; }
+  .task .tt { font-size: 17px; font-weight: 500; }
+  .task.done { opacity: .35; }
+  .task.done .box { background: var(--cream); border-color: var(--cream); }
+  .task.done .tt { text-decoration: line-through; }
+  .empty { color: rgba(255,255,255,.75); font-size: 15px; padding: 14px 0; }
+  #addRow { display: none; margin-top: 10px; }
+  #addRow.show { display: -webkit-box; display: flex; }
+  #addInput { -webkit-box-flex: 1; flex: 1; font-size: 17px; padding: 10px 14px; border-radius: 14px; border: 0; background: rgba(255,255,255,.22); color: #fff; outline: none; -webkit-appearance: none; }
+  #addInput::-webkit-input-placeholder { color: rgba(255,255,255,.7); }
+  .btn { font-size: 16px; font-weight: 600; padding: 10px 16px; border-radius: 14px; border: 0; background: var(--cream, #fdf7ec); color: var(--ink, #2a1d12); margin-left: 8px; -webkit-appearance: none; }
+  #chips { display: none; margin-top: 8px; }
+  #chips.show { display: block; }
+  .chip { display: inline-block; font-size: 14px; font-weight: 500; padding: 6px 12px; border-radius: 16px; background: rgba(255,255,255,.2); color: #fff; margin: 0 6px 6px 0; }
+  #refresh { position: absolute; right: 18px; top: 20px; font-size: 18px; color: rgba(255,255,255,.75); padding: 4px 6px; }
+
+  /* News */
+  #news { display: -webkit-box; display: flex; -webkit-box-align: center; align-items: center; overflow: hidden; padding: 0 6px; }
+  #newsTag { font-size: 11px; font-weight: 800; letter-spacing: .1em; background: #fff; color: #b80000; padding: 4px 7px; border-radius: 5px; margin-right: 12px; -webkit-flex-shrink: 0; flex-shrink: 0; }
+  #newsText { font-size: 16px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: opacity .6s; text-shadow: 0 1px 6px rgba(80,20,0,.25); }
+
+  #dim { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #000; opacity: 0; pointer-events: none; transition: opacity 2s; }
+  #dim.on { opacity: .72; pointer-events: auto; }
+
+  /* Setup */
+  #setup { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #1a1410; display: none; padding: 60px; }
+  #setup.show { display: block; }
+  #setup h1 { font-weight: 600; font-size: 34px; margin-bottom: 10px; }
+  #setup p { color: #cbbfb3; font-size: 16px; line-height: 1.5; max-width: 640px; margin-bottom: 18px; }
+  #setup input { display: block; width: 100%; max-width: 640px; font-size: 17px; padding: 12px 14px; border-radius: 12px; border: 0; background: #2c241e; color: #fff; margin: 6px 0 16px; -webkit-appearance: none; }
+  #setup label { font-size: 13px; color: #a3968a; text-transform: uppercase; letter-spacing: .1em; }
+  #setup .btn { margin-left: 0; margin-right: 10px; }
+  #setup .btn.ghost { background: #2c241e; color: #fff; }
+  #setupMsg { margin-top: 14px; color: #f2b06d; font-size: 15px; }
+
+  @media (orientation: portrait) {
+    #app { grid-template-columns: 1fr 1fr; grid-template-rows: auto auto auto auto 1fr 46px; overflow-y: auto; }
+    #clockBox { grid-column: 1 / span 2; grid-row: 1; }
+    #weather { grid-column: 1; grid-row: 2; } #aqi { grid-column: 2; grid-row: 2; }
+    #prayer { grid-column: 1 / span 2; grid-row: 3; } #quoteCard { grid-column: 1 / span 2; grid-row: 4; }
+    #panel { grid-column: 1 / span 2; grid-row: 5; } #news { grid-column: 1 / span 2; grid-row: 6; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg" id="bg-dawn"></div><div class="bg" id="bg-day"></div><div class="bg" id="bg-dusk"></div><div class="bg" id="bg-night"></div>
+<div id="rings"><div style="width:900px;height:900px;left:-300px;top:-420px"></div><div style="width:700px;height:700px;right:-260px;top:-300px"></div><div style="width:1100px;height:1100px;left:180px;top:300px"></div></div>
+
+<div id="app">
+  <div id="clockBox" class="card solid">
+    <div id="time">--:--</div>
+    <div id="date"></div>
+  </div>
+
+  <div id="weather" class="card">
+    <div class="label">Weather</div>
+    <div class="stamp" id="wStamp"></div>
+    <span id="wIcon">·</span><span id="wTemp">--°</span>
+    <div id="wDesc"></div>
+    <div class="wl" id="wMore"></div>
+  </div>
+
+  <div id="aqi" class="card">
+    <div id="aqiBar"></div>
+    <div class="label">Air quality</div>
+    <div class="stamp" id="aStamp"></div>
+    <div id="aqiFace"></div>
+    <div id="aqiNum">--</div>
+    <div id="aqiCat"></div>
+    <div id="aqiAdvice"></div>
+    <div id="aqiTomorrow"></div>
+  </div>
+
+  <div id="prayer" class="card">
+    <div id="prayerTop"><div class="label">Prayer times</div><div id="prayerNext"></div></div>
+    <div id="prayerRow"></div>
+  </div>
+
+  <div id="quoteCard" class="card">
+    <div id="cover"></div>
+    <div id="quoteText"><div class="label">Quote of the day</div><div id="quote"></div></div>
+  </div>
+
+  <div id="panel" class="card">
+    <div id="refresh" title="Refresh">&#8635;</div>
+    <div id="tabs"></div>
+    <div id="panelBody"></div>
+    <div id="chips"></div>
+    <div id="addRow">
+      <input id="addInput" type="text" placeholder="Add an item…" autocomplete="off" autocorrect="on">
+      <button class="btn" id="addBtn">Add</button>
+    </div>
+  </div>
+
+  <div id="news"><span id="newsTag">BBC</span><span id="newsText"></span></div>
+</div>
+
+<div id="dim"></div>
+
+<div id="setup">
+  <h1>Set up your dashboard</h1>
+  <p>Paste the web app link from your Google script and the password you chose in it. After you tap Save, use Share → Add to Home Screen, so the home screen icon keeps these settings.</p>
+  <label>Google script link</label>
+  <input id="sUrl" type="url" placeholder="https://script.google.com/macros/s/…/exec" autocapitalize="off" autocorrect="off">
+  <label>Password</label>
+  <input id="sPw" type="text" autocapitalize="off" autocorrect="off">
+  <button class="btn" id="sSave">Save</button>
+  <button class="btn ghost" id="sDemo">Preview with sample data</button>
+  <div id="setupMsg"></div>
+</div>
+
+<script>
+/* =====================================================================
+   SETTINGS — safe to edit
+   ===================================================================== */
+var SETTINGS = {
+  lat: 31.5204, lon: 74.3587,            // Lahore
+  theme: 'auto',                         // 'auto' follows the sun, or fix one: 'dawn', 'day', 'dusk', 'night'
+  use24h: false,
+  nightStart: '23:30', nightEnd: '06:30', // screen dims between these times
+  prayerMethod: 1,                        // 1 = Univ. of Islamic Sciences, Karachi
+  prayerSchool: 1,                        // 1 = Hanafi Asr
+  groceryQuickAdd: ['Milk', 'Eggs', 'Bread', 'Bananas', 'Coffee', 'Yoghurt', 'Fruit', 'Vegetables']
+};
+
+/* Quote of the day — one per day, in order. Add your own anywhere in the list:
+   ['The quote', 'Author, Book'],
+   The book cover is found automatically. To use a specific cover, add its image link:
+   ['The quote', 'Author, Book', 'https://link-to-cover.jpg'],                 */
+var QUOTES = [
+  ['It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.', 'Jane Austen, Pride and Prejudice'],
+  ['It was the best of times, it was the worst of times.', 'Charles Dickens, A Tale of Two Cities'],
+  ['Happy families are all alike; every unhappy family is unhappy in its own way.', 'Leo Tolstoy, Anna Karenina'],
+  ['I am no bird; and no net ensnares me: I am a free human being with an independent will.', 'Charlotte Brontë, Jane Eyre'],
+  ['Whatever our souls are made of, his and mine are the same.', 'Emily Brontë, Wuthering Heights'],
+  ['We are all in the gutter, but some of us are looking at the stars.', 'Oscar Wilde, Lady Windermere’s Fan'],
+  ['So we beat on, boats against the current, borne back ceaselessly into the past.', 'F. Scott Fitzgerald, The Great Gatsby'],
+  ['Call me Ishmael.', 'Herman Melville, Moby-Dick'],
+  ['To live is the rarest thing in the world. Most people exist, that is all.', 'Oscar Wilde'],
+  ['What do we live for, if it is not to make life less difficult to each other?', 'George Eliot, Middlemarch'],
+  ['You pierce my soul. I am half agony, half hope.', 'Jane Austen, Persuasion'],
+  ['Beware; for I am fearless, and therefore powerful.', 'Mary Shelley, Frankenstein'],
+  ['I went to the woods because I wished to live deliberately.', 'Henry David Thoreau, Walden'],
+  ['I am large, I contain multitudes.', 'Walt Whitman, Song of Myself', false],
+  ['I am not afraid of storms, for I am learning how to sail my ship.', 'Louisa May Alcott, Little Women'],
+  ['Why, sometimes I’ve believed as many as six impossible things before breakfast.', 'Lewis Carroll, Through the Looking-Glass'],
+  ['Mrs Dalloway said she would buy the flowers herself.', 'Virginia Woolf, Mrs Dalloway'],
+  ['Reader, I married him.', 'Charlotte Brontë, Jane Eyre'],
+  ['There is nothing like staying at home for real comfort.', 'Jane Austen, Emma'],
+  ['Hell is empty and all the devils are here.', 'William Shakespeare, The Tempest'],
+  ['The course of true love never did run smooth.', 'William Shakespeare, A Midsummer Night’s Dream'],
+  ['Two roads diverged in a wood, and I — I took the one less traveled by, and that has made all the difference.', 'Robert Frost, The Road Not Taken', false],
+  ['“Hope” is the thing with feathers that perches in the soul.', 'Emily Dickinson'],
+  ['All that we see or seem is but a dream within a dream.', 'Edgar Allan Poe'],
+  ['It is a far, far better thing that I do, than I have ever done.', 'Charles Dickens, A Tale of Two Cities'],
+  ['The only way to get rid of a temptation is to yield to it.', 'Oscar Wilde, The Picture of Dorian Gray']
+];
+
+/* =====================================================================
+   Below here is the machinery. No need to touch it.
+   ===================================================================== */
+var $ = function (id) { return document.getElementById(id); };
+var CFG = { url: '', pw: '', demo: false };
+var state = { tab: 'calendar', events: [], lists: { todo: [], groceries: [] }, news: [], newsIdx: 0, prayer: null, prayerDate: '' };
+var lastTouch = Date.now(), dimLiftUntil = 0, bootTime = Date.now();
+
+function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+function load(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+function pad(n) { return (n < 10 ? '0' : '') + n; }
+function fmtTime(d) {
+  var h = d.getHours(), m = d.getMinutes();
+  if (SETTINGS.use24h) return pad(h) + ':' + pad(m);
+  return ((h % 12) || 12) + ':' + pad(m) + (h < 12 ? 'am' : 'pm');
+}
+function hhmmToDate(s, base) {
+  var m = String(s).match(/(\d{1,2}):(\d{2})/); var d = new Date(base || Date.now());
+  d.setHours(+m[1], +m[2], 0, 0); return d;
+}
+function stamp(id) { $(id).textContent = fmtTime(new Date()); }
+
+function getJSON(url, ms) {
+  var ctrl = window.AbortController ? new AbortController() : null;
+  var t = setTimeout(function () { if (ctrl) ctrl.abort(); }, ms || 20000);
+  return fetch(url, ctrl ? { signal: ctrl.signal } : {}).then(function (r) {
+    clearTimeout(t); if (!r.ok) throw new Error('HTTP ' + r.status); return r.json();
+  });
+}
+function api(action, extra) {
+  if (CFG.demo) return Promise.resolve(DEMO[action] ? DEMO[action](extra) : { ok: true });
+  var q = '?action=' + action + '&pw=' + encodeURIComponent(CFG.pw);
+  if (extra) for (var k in extra) q += '&' + k + '=' + encodeURIComponent(extra[k]);
+  return getJSON(CFG.url + q).then(function (j) { if (j.error) throw new Error(j.error); return j; });
+}
+
+/* ---------- Config / setup ---------- */
+function readConfig() {
+  var h = location.hash.replace(/^#/, ''), p = {};
+  h.split('&').forEach(function (kv) { var i = kv.indexOf('='); if (i > 0) p[kv.slice(0, i)] = decodeURIComponent(kv.slice(i + 1)); });
+  if (p.demo) { CFG.demo = true; return true; }
+  CFG.url = p.s || load('dash_url'); CFG.pw = p.p || load('dash_pw');
+  if (CFG.url && CFG.pw) { store('dash_url', CFG.url); store('dash_pw', CFG.pw); return true; }
+  return false;
+}
+function showSetup(msg) {
+  $('setup').className = 'show'; $('sUrl').value = CFG.url; $('sPw').value = CFG.pw;
+  $('setupMsg').textContent = msg || '';
+}
+$('sSave').onclick = function () {
+  var u = $('sUrl').value.trim(), p = $('sPw').value.trim();
+  if (!/^https:\/\/script\.google(usercontent)?\.com\//.test(u)) { $('setupMsg').textContent = 'That link doesn’t look like a Google script link. It should start with https://script.google.com/'; return; }
+  if (!p) { $('setupMsg').textContent = 'Enter the password from your script.'; return; }
+  $('setupMsg').textContent = 'Checking…';
+  CFG.url = u; CFG.pw = p;
+  api('ping').then(function () {
+    location.hash = 's=' + encodeURIComponent(u) + '&p=' + encodeURIComponent(p);
+    location.reload();
+  }).catch(function (e) {
+    $('setupMsg').textContent = /wrong-password/.test(e.message) ? 'The script says the password is wrong.' : 'Couldn’t reach the script (' + e.message + '). Check the link and that it’s deployed with access set to “Anyone”.';
+  });
+};
+$('sDemo').onclick = function () { location.hash = 'demo=1'; location.reload(); };
+
+/* ---------- Clock, date, quote, night dim ---------- */
+function tickClock() {
+  var d = new Date(), h = d.getHours(), m = d.getMinutes();
+  var hh = SETTINGS.use24h ? h : ((h % 12) || 12);
+  $('time').className = hh >= 10 ? 'long' : '';
+  $('time').innerHTML = SETTINGS.use24h ? pad(h) + ':' + pad(m)
+    : ((h % 12) || 12) + ':' + pad(m) + '<span class="ampm">' + (h < 12 ? 'AM' : 'PM') + '</span>';
+  $('date').textContent = d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+  var start = new Date(d.getFullYear(), 0, 0), doy = Math.floor((d - start) / 864e5);
+  showQuote(QUOTES[doy % QUOTES.length]);
+  var now = h * 60 + m, ns = hhmmToMin(SETTINGS.nightStart), ne = hhmmToMin(SETTINGS.nightEnd);
+  var night = ns > ne ? (now >= ns || now < ne) : (now >= ns && now < ne);
+  $('dim').className = (night && Date.now() > dimLiftUntil) ? 'on' : '';
+  // Fresh reload once a day at 4am to keep things snappy
+  if (h === 4 && m === 0 && Date.now() - bootTime > 3600e3) location.reload();
+  updatePrayerHighlight();
+  applyTheme();
+}
+var shownQuote = null;
+function showQuote(q) {
+  if (shownQuote === q) return; shownQuote = q;
+  $('quote').innerHTML = '“' + esc(q[0]) + '”<span class="by">— ' + esc(q[1]) + '</span>';
+  var parts = q[1].split(', '), author = parts[0], book = parts.slice(1).join(', ');
+  var fake = function () {
+    $('cover').innerHTML = '<div class="fakeCover"><div class="ft">' + esc(book || author) + '</div><div class="fr"></div><div class="fa">' + esc(author) + '</div></div>';
+  };
+  var show = function (url) {
+    if (!url) return fake();
+    var img = new Image(); img.onload = function () { if (shownQuote === q) { $('cover').innerHTML = ''; $('cover').appendChild(img); } }; img.onerror = fake; img.src = url;
+  };
+  fake();
+  if (q[2] === false || !book || CFG.demo) return;          // no cover for poems / quotes without a book
+  if (q[2]) return show(q[2]);                              // your own cover link, if you add one
+  var key = 'cover:' + q[1], saved = load(key);
+  if (saved) return show(saved === 'none' ? '' : saved);
+  getJSON('https://openlibrary.org/search.json?title=' + encodeURIComponent(book) + '&author=' + encodeURIComponent(author) + '&limit=1&fields=cover_i')
+    .then(function (j) {
+      var id = j.docs && j.docs[0] && j.docs[0].cover_i;
+      var url = id ? 'https://covers.openlibrary.org/b/id/' + id + '-M.jpg?default=false' : '';
+      store(key, url || 'none'); show(url);
+    }).catch(function () {});
+}
+var sun = { rise: '06:30', set: '17:30' };   // replaced by today's real times from the weather
+function applyTheme() {
+  var t = forcedTheme;
+  if (!t) {
+    var now = new Date(), rise = hhmmToDate(sun.rise), set = hhmmToDate(sun.set), m = 6e4;
+    if (now >= new Date(rise - 45 * m) && now < new Date(+rise + 75 * m)) t = 'dawn';      // around sunrise
+    else if (now >= new Date(+rise + 75 * m) && now < new Date(set - 60 * m)) t = 'day';
+    else if (now >= new Date(set - 60 * m) && now < new Date(+set + 90 * m)) t = 'dusk';   // golden hour into evening
+    else t = 'night';
+  }
+  if (document.body.getAttribute('data-theme') === t) return;
+  document.body.setAttribute('data-theme', t);
+  document.body.className = 't-' + t + (document.body.className.indexOf('ready') >= 0 ? ' ready' : '');
+  ['dawn', 'day', 'dusk', 'night'].forEach(function (x) { $('bg-' + x).className = 'bg' + (x === t ? ' on' : ''); });
+}
+function hhmmToMin(s) { var p = s.split(':'); return +p[0] * 60 + +p[1]; }
+$('dim').addEventListener('click', function () { dimLiftUntil = Date.now() + 120e3; $('dim').className = ''; });
+
+/* ---------- Weather (Open-Meteo, no key) ---------- */
+var WMO = {
+  0: ['Clear', '☀️', '🌙'], 1: ['Mostly clear', '🌤️', '🌙'], 2: ['Partly cloudy', '⛅', '☁️'], 3: ['Overcast', '☁️'],
+  45: ['Fog', '🌫️'], 48: ['Fog', '🌫️'], 51: ['Light drizzle', '🌦️'], 53: ['Drizzle', '🌦️'], 55: ['Heavy drizzle', '🌧️'],
+  61: ['Light rain', '🌦️'], 63: ['Rain', '🌧️'], 65: ['Heavy rain', '🌧️'], 66: ['Freezing rain', '🌧️'], 67: ['Freezing rain', '🌧️'],
+  71: ['Light snow', '🌨️'], 73: ['Snow', '🌨️'], 75: ['Heavy snow', '🌨️'], 77: ['Snow', '🌨️'],
+  80: ['Showers', '🌦️'], 81: ['Showers', '🌧️'], 82: ['Heavy showers', '🌧️'], 85: ['Snow showers', '🌨️'], 86: ['Snow showers', '🌨️'],
+  95: ['Thunderstorm', '⛈️'], 96: ['Thunderstorm', '⛈️'], 99: ['Thunderstorm', '⛈️']
+};
+function wmo(code, isDay) { var w = WMO[code] || ['—', '·']; return { text: w[0], icon: (!isDay && w[2]) ? w[2] : w[1] }; }
+
+function loadWeather() {
+  var u = 'https://api.open-meteo.com/v1/forecast?latitude=' + SETTINGS.lat + '&longitude=' + SETTINGS.lon +
+    '&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,is_day' +
+        '&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&timezone=auto&forecast_days=1';
+  return getJSON(u).then(function (j) {
+    var c = j.current, w = wmo(c.weather_code, c.is_day);
+    $('wIcon').textContent = w.icon;
+    $('wTemp').textContent = Math.round(c.temperature_2m) + '°';
+    $('wDesc').textContent = w.text;
+    var sr = j.daily.sunrise[0].slice(11, 16), ss = j.daily.sunset[0].slice(11, 16);
+    sun.rise = sr; sun.set = ss; applyTheme();
+    $('wMore').innerHTML = 'Feels ' + Math.round(c.apparent_temperature) + '° · H ' + Math.round(j.daily.temperature_2m_max[0]) +
+      '° L ' + Math.round(j.daily.temperature_2m_min[0]) + '°<br>Humidity ' + c.relative_humidity_2m + '% · Wind ' + Math.round(c.wind_speed_10m) +
+      ' km/h<br>Sunrise ' + fmtTime(hhmmToDate(sr)).replace(/am|pm/, '') + ' \u00b7 Sunset ' + fmtTime(hhmmToDate(ss)).replace(/am|pm/, '');
+
+    stamp('wStamp');
+  });
+}
+
+/* ---------- AQI (IQAir via your script) + tomorrow trend (Open-Meteo) ---------- */
+var AQI_LEVELS = [
+  [50, 'Good', '#7fd38c', 'Clean air \u2014 open the windows.', '#123b1c'],
+  [100, 'Moderate', '#f4dc63', 'Fine for most people.', '#3d3105'],
+  [150, 'Unhealthy for sensitive groups', '#ffad5c', 'Go easy on long outdoor exercise.', '#4a2300'],
+  [200, 'Unhealthy', '#f0605d', 'Keep windows shut. Mask up outdoors.', '#ffffff'],
+  [300, 'Very unhealthy', '#9b5de0', 'Stay in, purifier on. N95 if you go out.', '#ffffff'],
+  [9999, 'Hazardous', '#8c1d40', 'Avoid going out. N95 if you must.', '#ffffff']
+];
+/* Face icons for each AQI level (original line drawings) */
+var FACE_HEAD = '<path d="M17 30c0-11 7-18 15-18s15 7 15 18c0 12-7 21-15 21s-15-9-15-21z"/>' +
+  '<path d="M17 27c3-1 6-4 8-8 4 3 11 4 19 2" />' +
+  '<path d="M17 30c-2 0-3 2-2 4s2 3 3 3M47 30c2 0 3 2 2 4s-2 3-3 3"/>';
+var EYES = '<circle cx="26" cy="31" r="1.6" fill="currentColor" stroke="none"/><circle cx="38" cy="31" r="1.6" fill="currentColor" stroke="none"/>';
+var TIRED = '<path d="M23.5 31.5h5M35.5 31.5h5"/>';
+var FACES = [
+  EYES + '<path d="M26 40q6 5 12 0"/>',                                                     // good: smile
+  EYES + '<path d="M27 41h10"/>',                                                         // moderate: neutral
+  EYES + '<path d="M27 42q5-3 10 0"/>',                                                   // sensitive: slight frown
+  EYES + '<rect x="21" y="35" width="22" height="12" rx="4"/><path d="M24 39h16M24 43h16M21 37l-4-4M43 37l4-4"/>',          // unhealthy: surgical mask
+  TIRED + '<path d="M21 37q11-6 22 0q0 11-11 13q-11-2-11-13z"/><circle cx="32" cy="43" r="2.5"/><path d="M21 38l-4-5M43 38l4-5"/>', // very unhealthy: respirator
+  '<circle cx="25.5" cy="31" r="5"/><circle cx="38.5" cy="31" r="5"/><path d="M30.5 31h3"/>' +
+  '<path d="M26 39q6-3 12 0l-2 9h-8z"/><circle cx="22" cy="46" r="4.5"/><circle cx="42" cy="46" r="4.5"/><path d="M28 43h8"/>'  // hazardous: gas mask
+];
+function faceSvg(i) {
+  return '<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' + FACE_HEAD + FACES[i] + '</svg>';
+}
+function aqiLevel(v) { for (var i = 0; i < AQI_LEVELS.length; i++) if (v <= AQI_LEVELS[i][0]) return AQI_LEVELS[i]; return AQI_LEVELS[5]; }
+
+function loadAqi() {
+  return api('aqi').then(function (j) {
+    var lv = aqiLevel(j.aqi);
+    $('aqiNum').textContent = j.aqi;
+    $('aqi').style.background = lv[2];
+    $('aqi').style.color = lv[4];
+    $('aqiCat').textContent = lv[1];
+    $('aqiFace').innerHTML = faceSvg(AQI_LEVELS.indexOf(lv));
+    $('aqiAdvice').textContent = lv[3];
+    stamp('aStamp');
+  }).catch(function (e) { $('aqiAdvice').textContent = 'AQI unavailable: ' + e.message; });
+}
+function loadAqiTrend() {
+  var u = 'https://air-quality-api.open-meteo.com/v1/air-quality?latitude=' + SETTINGS.lat + '&longitude=' + SETTINGS.lon + '&hourly=us_aqi&timezone=auto&forecast_days=2';
+  return getJSON(u).then(function (j) {
+    var t = j.hourly.time, v = j.hourly.us_aqi, today = t[0].slice(0, 10), a = [], b = [];
+    for (var i = 0; i < t.length; i++) {
+      var hr = +t[i].slice(11, 13); if (hr < 8 || hr > 22 || v[i] == null) continue; // waking hours
+      (t[i].slice(0, 10) === today ? a : b).push(v[i]);
+    }
+    if (!a.length || !b.length) return;
+    var avg = function (x) { return x.reduce(function (s, n) { return s + n; }, 0) / x.length; };
+    var r = avg(b) / avg(a);
+    $('aqiTomorrow').textContent = 'Tomorrow: ' + (r > 1.15 ? 'likely worse ↗' : r < 0.85 ? 'likely better ↘' : 'about the same →');
+  }).catch(function () {});
+}
+
+/* ---------- Prayer times (Aladhan, no key) ---------- */
+var PRAYERS = [['Fajr', 'Fajr'], ['Dhuhr', 'Zuhr'], ['Asr', 'Asr'], ['Maghrib', 'Maghrib'], ['Isha', 'Isha']];
+function loadPrayer() {
+  var d = new Date(), ds = pad(d.getDate()) + '-' + pad(d.getMonth() + 1) + '-' + d.getFullYear();
+  var u = 'https://api.aladhan.com/v1/timings/' + ds + '?latitude=' + SETTINGS.lat + '&longitude=' + SETTINGS.lon +
+    '&method=' + SETTINGS.prayerMethod + '&school=' + SETTINGS.prayerSchool;
+  return getJSON(u).then(function (j) {
+    state.prayer = j.data.timings; state.prayerDate = d.toDateString();
+    updatePrayerHighlight(true);
+  });
+}
+function updatePrayerHighlight(force) {
+  if (!state.prayer) return;
+  var now = new Date();
+  if (state.prayerDate !== now.toDateString()) { state.prayer = null; loadPrayer().catch(retryLater(loadPrayer)); return; }
+  var times = PRAYERS.map(function (p) { return hhmmToDate(state.prayer[p[0]]); });
+  var cur = 4, next = 0, nextTime;
+  for (var i = 0; i < 5; i++) if (now >= times[i]) cur = i;
+  if (now < times[0]) { cur = 4; next = 0; nextTime = times[0]; }
+  else if (cur === 4) { next = 0; nextTime = new Date(times[0].getTime() + 864e5); }
+  else { next = cur + 1; nextTime = times[next]; }
+  if (cur === 0 && state.prayer.Sunrise && now >= hhmmToDate(state.prayer.Sunrise)) cur = -1; // Fajr time is over after sunrise
+  var html = '';
+  for (var k = 0; k < 5; k++) html += '<div class="pr' + (k === cur ? ' now' : '') + '"><div class="n">' + PRAYERS[k][1] + '</div><div class="t">' + fmtTime(times[k]).replace(/(am|pm)$/, '') + '</div></div>';
+  if (force || $('prayerRow').innerHTML !== html) $('prayerRow').innerHTML = html;
+  var mins = Math.round((nextTime - now) / 6e4), hh = Math.floor(mins / 60), mm = mins % 60;
+  $('prayerNext').textContent = 'Next \u00b7 ' + PRAYERS[next][1] + ' in ' + (hh ? hh + 'h ' : '') + mm + 'm';
+}
+
+/* ---------- News (BBC via your script) ---------- */
+function loadNews() {
+  return api('news').then(function (j) { state.news = j.items || []; state.newsIdx = 0; showHeadline(); });
+}
+function showHeadline() {
+  if (!state.news.length) return;
+  var el = $('newsText'); el.style.opacity = 0;
+  setTimeout(function () { el.textContent = state.news[state.newsIdx % state.news.length].title; el.style.opacity = 1; state.newsIdx++; }, 600);
+}
+
+/* ---------- Calendar + Tasks (your script) ---------- */
+var TABS = [['calendar', 'Calendar'], ['todo', 'To-do'], ['groceries', 'Groceries']];
+function renderTabs() {
+  $('tabs').innerHTML = TABS.map(function (t) {
+    var c = t[0] === 'calendar' ? '' : '<span class="c">' + (state.lists[t[0]] || []).length + '</span>';
+    return '<div class="tab' + (state.tab === t[0] ? ' on' : '') + '" data-tab="' + t[0] + '">' + t[1] + c + '</div>';
+  }).join('');
+}
+$('tabs').addEventListener('click', function (e) {
+  var t = e.target.closest ? e.target.closest('.tab') : null; if (!t) return;
+  state.tab = t.getAttribute('data-tab'); renderPanel();
+});
+function renderPanel() {
+  renderTabs();
+  var body = $('panelBody'), isList = state.tab !== 'calendar';
+  $('addRow').className = isList ? 'show' : '';
+  $('chips').className = state.tab === 'groceries' ? 'show' : '';
+  $('addInput').placeholder = state.tab === 'groceries' ? 'Add groceries…' : 'Add a to-do…';
+  if (!isList) { body.innerHTML = renderEvents(); return; }
+  var items = state.lists[state.tab] || [];
+  body.innerHTML = items.length ? items.map(function (t) {
+    return '<div class="task" data-id="' + esc(t.id) + '"><div class="box"></div><div class="tt">' + esc(t.title) + '</div></div>';
+  }).join('') : '<div class="empty">Nothing here. Add something below.</div>';
+}
+function dayLabel(d) {
+  var t = new Date(); t.setHours(0, 0, 0, 0);
+  var x = new Date(d); x.setHours(0, 0, 0, 0);
+  var diff = Math.round((x - t) / 864e5);
+  return diff === 0 ? 'Today' : diff === 1 ? 'Tomorrow' : x.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' });
+}
+function renderEvents() {
+  if (!state.events.length) return '<div class="empty">Nothing in the next few days.</div>';
+  var html = '', last = '', now = Date.now();
+  state.events.forEach(function (ev) {
+    var p = ev.allDay ? String(ev.date).split('-') : null;
+    var startD = ev.allDay ? new Date(+p[0], +p[1] - 1, +p[2]) : new Date(ev.start);
+    var lbl = dayLabel(startD);
+    if (lbl !== last) { html += '<div class="day">' + lbl + '</div>'; last = lbl; }
+    var past = !ev.allDay && ev.end < now;
+    html += '<div class="ev' + (past ? ' past' : '') + '"><div class="et">' + (ev.allDay ? 'All day' : fmtTime(new Date(ev.start))) +
+      '</div><div class="dot" style="background:' + esc(ev.color || '#6fa8dc') + '"></div><div class="en">' + esc(ev.title || '(No title)') + '</div></div>';
+  });
+  return html;
+}
+function loadCalendar() { return api('calendar').then(function (j) { state.events = j.events || []; if (state.tab === 'calendar') renderPanel(); }); }
+function loadTasks() { return api('tasks').then(function (j) { state.lists = j.lists || state.lists; renderPanel(); }); }
+
+$('panelBody').addEventListener('click', function (e) {
+  var row = e.target.closest ? e.target.closest('.task') : null; if (!row || row.className.indexOf('done') >= 0) return;
+  var id = row.getAttribute('data-id'), list = state.tab;
+  row.className = 'task done';
+  api('done', { list: list, id: id }).then(function () {
+    setTimeout(function () { state.lists[list] = state.lists[list].filter(function (t) { return t.id !== id; }); if (state.tab === list) renderPanel(); }, 700);
+  }).catch(function () { row.className = 'task'; });
+});
+function addItem(title) {
+  title = (title || '').trim(); if (!title) return;
+  var dup = (state.lists[state.tab] || []).some(function (t) { return t.title.toLowerCase() === title.toLowerCase(); });
+  if (dup) return;
+  var list = state.tab, tmp = { id: 'tmp' + Date.now(), title: title };
+  state.lists[list] = [tmp].concat(state.lists[list] || []); renderPanel();
+  api('add', { list: list, title: title }).then(function (j) { tmp.id = j.id || tmp.id; })
+    .catch(function () { state.lists[list] = state.lists[list].filter(function (t) { return t !== tmp; }); renderPanel(); });
+}
+$('addBtn').onclick = function () { addItem($('addInput').value); $('addInput').value = ''; $('addInput').blur(); };
+$('addInput').addEventListener('keydown', function (e) { if (e.keyCode === 13) $('addBtn').onclick(); });
+$('chips').innerHTML = SETTINGS.groceryQuickAdd.map(function (g) { return '<span class="chip">+ ' + esc(g) + '</span>'; }).join('');
+$('chips').addEventListener('click', function (e) { if (e.target.className === 'chip') addItem(e.target.textContent.replace(/^\+\s*/, '')); });
+$('refresh').onclick = function () { $('refresh').style.opacity = .3; Promise.all([loadTasks(), loadCalendar()]).catch(function () {}).then(function () { $('refresh').style.opacity = 1; }); };
+
+// Return to the calendar tab after 3 idle minutes (unless typing)
+document.addEventListener('touchstart', function () { lastTouch = Date.now(); }, true);
+document.addEventListener('mousedown', function () { lastTouch = Date.now(); }, true);
+setInterval(function () {
+  if (state.tab !== 'calendar' && Date.now() - lastTouch > 180e3 && document.activeElement !== $('addInput')) { state.tab = 'calendar'; renderPanel(); }
+}, 30e3);
+
+/* ---------- Scheduling ---------- */
+function retryLater(fn) { return function () { setTimeout(function () { fn().catch(retryLater(fn)); }, 5 * 60e3); }; }
+function every(fn, mins) { fn().catch(retryLater(fn)); setInterval(function () { fn().catch(function () {}); }, mins * 60e3); }
+
+function start() {
+  tickClock(); setInterval(tickClock, 10e3);
+  renderPanel();
+  every(loadWeather, 60);
+  every(loadAqi, 60);
+  every(loadAqiTrend, 120);
+  loadPrayer().catch(retryLater(loadPrayer));
+  every(loadNews, 120);
+  setInterval(showHeadline, 15e3);
+  every(loadCalendar, 60);
+  every(loadTasks, 10);
+}
+
+/* ---------- Sample data for preview ---------- */
+var DEMO = (function () {
+  var d0 = new Date(); d0.setHours(0, 0, 0, 0);
+  var at = function (day, h, m) { return d0.getTime() + day * 864e5 + (h * 60 + (m || 0)) * 6e4; };
+  var iso = function (day) { var x = new Date(d0.getTime() + day * 864e5); return x.getFullYear() + '-' + pad(x.getMonth() + 1) + '-' + pad(x.getDate()); };
+  var lists = { todo: [{ id: 'a', title: 'Send investor deck' }, { id: 'b', title: 'Book tennis court' }, { id: 'c', title: 'Grade editing assignments' }],
+    groceries: [{ id: 'd', title: 'Milk' }, { id: 'e', title: 'Bananas' }, { id: 'f', title: 'Coffee beans' }] };
+  return {
+    ping: function () { return { ok: true }; },
+    aqi: function () { return { aqi: 214, main: 'p2' }; },
+    news: function () { return { items: [{ title: 'Sample headline: this is where BBC top stories will appear' }, { title: 'Sample headline: headlines rotate every 15 seconds' }] }; },
+    calendar: function () { return { events: [
+      { title: 'Lab 8 weekly call', start: at(0, 11), end: at(0, 12), color: '#4986e7' },
+      { title: 'Tennis', start: at(0, 17, 30), end: at(0, 19), color: '#16a765' },
+      { title: 'Public holiday (sample)', allDay: true, date: iso(1), color: '#f83a22' },
+      { title: 'NCA class', start: at(1, 10), end: at(1, 13), color: '#9a9cff' },
+      { title: 'Dinner', start: at(2, 20), end: at(2, 22), color: '#ff7537' }] }; },
+    tasks: function () { return { lists: lists }; },
+    add: function () { return { ok: true, id: 'n' + Date.now() }; },
+    done: function () { return { ok: true }; }
+  };
+})();
+
+var forcedTheme = (location.hash.match(/theme=(\w+)/) || [])[1] || (SETTINGS.theme !== 'auto' ? SETTINGS.theme : '');
+applyTheme();
+setTimeout(function () { document.body.className += ' ready'; }, 1500);
+if (readConfig()) start(); else { tickClock(); showSetup(); }
+</script>
+</body>
+</html>
