@@ -51,7 +51,7 @@
   #rings div { position: absolute; border-radius: 50%; border: 1px solid rgba(255,255,255,.18); }
 
   /* ---------- Layout ---------- */
-  #app { position: absolute; top: 0; left: 0; right: 0; bottom: 0; padding: 20px 20px 0; padding-top: calc(12px + env(safe-area-inset-top, 8px));
+  #app { position: fixed; top: 0; left: 0; right: 0; bottom: 0; padding: 20px 20px 6px; padding-top: calc(12px + env(safe-area-inset-top, 8px));
     display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; grid-template-rows: 336px auto 1fr 26px; grid-gap: 14px; }
   #clockBox { grid-column: 1 / span 2; grid-row: 1; }
   #weather  { grid-column: 3; grid-row: 1; }
@@ -683,6 +683,11 @@ var DEMO = (function () {
 var forcedTheme = (location.hash.match(/theme=(\w+)/) || [])[1] || (SETTINGS.theme !== 'auto' ? SETTINGS.theme : '');
 applyTheme();
 setTimeout(function () { document.body.className += ' ready'; }, 1500);
+// Old iOS can report the wrong page height in home-screen mode, leaving a gap at the bottom.
+// Size the layout to the real visible screen instead.
+function fitScreen() { var h = window.innerHeight || document.documentElement.clientHeight; $('app').style.height = h + 'px'; $('app').style.bottom = 'auto'; }
+fitScreen(); window.addEventListener('resize', fitScreen); window.addEventListener('orientationchange', function () { setTimeout(fitScreen, 300); });
+setTimeout(fitScreen, 1000);
 if (readConfig()) start(); else { tickClock(); showSetup(); }
 </script>
 </body>
