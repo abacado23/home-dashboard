@@ -171,7 +171,7 @@
   #miniTime .dg { font-weight: 300; letter-spacing: 0; }
   #miniTime .ampm { font-size: 40px; font-weight: 300; letter-spacing: 0; margin-left: 10px; color: #8a8378; }
   #miniDate { font-size: 26px; font-weight: 400; color: #8a8378; margin-top: 18px; letter-spacing: .02em; }
-  #ver { margin-left: auto; padding-left: 12px; font-size: 10px; opacity: .45; -webkit-flex-shrink: 0; flex-shrink: 0; }
+  #ver { position: absolute; right: 26px; bottom: 4px; color: #fff; padding-left: 12px; font-size: 10px; opacity: .45; -webkit-flex-shrink: 0; flex-shrink: 0; }
   #dim { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #000; opacity: 0; pointer-events: none; transition: opacity 2s; }
   #dim.on { opacity: .72; pointer-events: auto; }
 
@@ -199,7 +199,7 @@
   body.t-day   { --wbox: #d8701f; }
   body.t-dusk  { --wbox: #5a4fc4; }
   body.t-night { --wbox: #2e3f88; }
-  #app { grid-template-columns: 1.55fr 1fr; grid-template-rows: 58% 1fr 26px; }
+  #app { grid-template-columns: 1.55fr 1fr; grid-template-rows: 58% 1fr; padding-bottom: 20px !important; }
   #clockBox { grid-column: 1; grid-row: 1; }
   #glance   { grid-column: 2; grid-row: 1; display: grid; grid-template-rows: 1fr 1fr; grid-gap: 14px; min-height: 0; }
   #prayer   { grid-column: 1; grid-row: 2; }
@@ -211,11 +211,10 @@
   #weather, #aqi { grid-column: auto; grid-row: auto; min-height: 0; }
   #weather { background: var(--wbox); }
   .bigNum { display: inline-block; white-space: nowrap; font-size: 120px; line-height: 1.05; letter-spacing: -.01em; font-weight: 600; margin: 0; }
-  .boxIcon { position: absolute; right: 18px; top: 50%; margin-top: -48px; width: 96px; height: 96px; font-size: 80px; line-height: 96px; text-align: center; }
-  #aqiFace { right: 14px; bottom: auto; }
-  #aqiFace svg { width: 96px; height: 96px; }
+  .boxIcon { position: absolute; right: 24px; top: 50%; margin-top: -70px; width: 140px; height: 140px; font-size: 118px; line-height: 140px; text-align: center; }
+  #wIcon, #aqiFace { position: absolute; right: 24px; top: 50%; bottom: auto; margin-top: -70px; width: 140px; height: 140px; font-size: 118px; line-height: 140px; text-align: center; display: block; opacity: 1; }
+  #aqiFace svg { width: 168px; height: 168px; display: block; margin: -14px 0 0 -14px; }
   .desc { position: absolute; left: 22px; bottom: 16px; font-size: 24px; font-weight: 700; }
-  #wIcon { margin-top: -48px; }
   /* prayer: big and clear */
   #prayer { padding: 18px 20px; display: -webkit-box; display: flex; -webkit-box-orient: vertical; flex-direction: column; }
   #prayerTop { margin-bottom: 6px; }
@@ -224,6 +223,16 @@
   .pr { padding: 14px 0 12px !important; }
   .pr { min-width: 0; display: -webkit-box; display: flex; -webkit-box-orient: vertical; flex-direction: column; -webkit-box-pack: center; justify-content: center; padding: 6px 0; border-radius: 20px; }
   .pr .n { font-size: 19px; }
+  #prayerRow { position: relative; display: block; overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 24%, #000 76%, transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0, #000 24%, #000 76%, transparent 100%); }
+  .pc { position: absolute; top: 50%; width: 200px; margin-left: -100px; text-align: center; padding: 12px 0 14px; border-radius: 24px;
+    -webkit-transform: translateY(-50%); transform: translateY(-50%); transition: left .9s ease, opacity .9s ease; border: 2px solid transparent; }
+  .pc .n { font-size: 22px; font-weight: 700; }
+  .pc .t { font-family: Oswald, -apple-system, "Helvetica Neue", Inter, Arial, sans-serif; font-weight: 500; font-size: 84px; line-height: 1; margin-top: 2px; white-space: nowrap; }
+  .pc.cur { background: var(--cream); color: var(--ink); text-shadow: none; box-shadow: 0 8px 22px rgba(60,20,0,.18); }
+  .pc.cur .n { color: var(--inkMuted); }
+  .pc.soon { border-color: rgba(255,255,255,.85); }
   .pr .t { font-family: Oswald, -apple-system, "SF Pro Display", "Helvetica Neue", Inter, Arial, sans-serif; font-weight: 500; letter-spacing: 0; font-size: 52px; line-height: 1.1; margin-top: 4px; white-space: nowrap; }
   /* full-screen quote */
   #quoteFull { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--cream); color: var(--ink); opacity: 0; pointer-events: none;
@@ -236,8 +245,18 @@
   #qLabel { font-size: 14px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--inkMuted); margin-bottom: 18px; }
   #quoteFull #quote { font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: 44px; line-height: 1.3; color: var(--ink); }
   #quoteFull #quote .by { font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; font-style: normal; font-size: 20px; font-weight: 600; color: var(--inkMuted); margin-top: 22px; }
+  /* full-screen news */
+  #newsFull { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #14110f; opacity: 0; pointer-events: none; transition: opacity 1.5s ease; overflow: hidden; }
+  #newsFull.on { opacity: 1; pointer-events: auto; }
+  #nImg { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-size: cover; background-position: center; transition: opacity 1s ease;
+    background-color: #3b2a7a; background-image: linear-gradient(160deg, #e08a35, #b9512a); }
+  #nShade { position: absolute; left: 0; right: 0; bottom: 0; height: 75%; background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.55) 45%, rgba(0,0,0,.88) 100%); }
+  #nText { position: absolute; left: 56px; right: 56px; bottom: 48px; color: #fff; transition: opacity 1s ease; }
+  #nLabel { display: inline-block; font-size: 15px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; background: #b80000; padding: 6px 10px; border-radius: 6px; margin-bottom: 18px; }
+  #nTitle { font-size: 50px; font-weight: 800; line-height: 1.12; letter-spacing: -.01em; text-shadow: 0 2px 14px rgba(0,0,0,.4); }
+  #nDesc { font-size: 23px; font-weight: 500; line-height: 1.4; margin-top: 14px; opacity: .9; max-width: 860px; }
   @media (orientation: portrait) {
-    #app { grid-template-columns: 1fr; grid-template-rows: 30% 22% auto 1fr 26px; }
+    #app { grid-template-columns: 1fr; grid-template-rows: 30% 22% auto 1fr; }
     #clockBox { grid-column: 1; grid-row: 1; } #glance { grid-column: 1; grid-row: 2; grid-template-rows: 1fr; grid-template-columns: 1fr 1fr; }
     #prayer { grid-column: 1; grid-row: 3; } #panel { grid-column: 1; grid-row: 4; } #news { grid-column: 1; grid-row: 5; }
   }
@@ -286,10 +305,13 @@
     </div>
   </div>
 
-  <div id="news"><span id="newsTag">BBC</span><span id="newsText"></span><span id="ver">v13</span></div>
+  <div id="news" style="display:none"><span id="newsTag"></span><span id="newsText"></span></div>
+  <span id="ver">v14</span>
 </div>
 
 <div id="quoteFull"><div id="qInner"><div id="cover"></div><div id="quoteText"><div id="qLabel">Quote of the day</div><div id="quote"></div></div></div></div>
+<div id="newsFull"><div id="nImg"></div><div id="nShade"></div>
+  <div id="nText"><div id="nLabel"></div><div id="nTitle"></div><div id="nDesc"></div></div></div>
 <div id="mini"><div id="miniTime"></div><div id="miniDate"></div></div>
 <div id="dim"></div>
 
@@ -315,6 +337,7 @@ var SETTINGS = {
   use24h: false,
   minimalStart: '21:00', minimalEnd: '05:30', // just a clock on black between these times (tap to peek at the dashboard)
   quoteEvery: 20, quoteSeconds: 30,       // show the quote full-screen every 20 minutes, for 30 seconds
+  newsEvery: 20, newsSlideSeconds: 10,    // top 3 BBC headlines full-screen every 20 minutes (halfway between quotes), 10 seconds each
   nightStart: '23:30', nightEnd: '06:30', // screen dims further between these times
   prayerMethod: 1,                        // 1 = Univ. of Islamic Sciences, Karachi
   prayerSchool: 1,                        // 1 = Hanafi Asr
@@ -456,18 +479,18 @@ function fitClock() {
 function fitNum(el, maxPx) {
   var card = el.parentNode; if (!card.clientWidth) return;
   el.style.fontSize = '100px';
-  var availW = card.clientWidth - 44 - 110;          // leave room for the icon
+  var availW = card.clientWidth - 44 - 170;          // leave room for the icon
   var availH = (card.clientHeight - 56) / 1.05;      // leave room for the description
   el.style.fontSize = Math.floor(Math.min(maxPx, availH, 100 * availW / el.offsetWidth)) + 'px';
 }
 function fitNums() { fitNum($('wTemp'), 170); fitNum($('aqiNum'), 170); }
 window.addEventListener('resize', function () { setTimeout(function () { fitClock(); fitNums(); }, 50); });
 function fitPrayer() {
-  var cells = document.querySelectorAll('.pr .t'); if (!cells.length) return;
-  for (var i = 0; i < cells.length; i++) cells[i].style.fontSize = '46px';
-  var colW = cells[0].parentNode.clientWidth - 26, widest = 0;
+  var cells = document.querySelectorAll('.pc .t'); if (!cells.length) return;
+  for (var i = 0; i < cells.length; i++) cells[i].style.fontSize = '84px';
+  var colW = 180, widest = 0;
   for (var k = 0; k < cells.length; k++) widest = Math.max(widest, cells[k].offsetWidth);
-  if (widest > colW) for (var j = 0; j < cells.length; j++) cells[j].style.fontSize = Math.floor(46 * colW / widest) + 'px';
+  if (widest > colW) for (var j = 0; j < cells.length; j++) cells[j].style.fontSize = Math.floor(84 * colW / widest) + 'px';
 }
 var shownQuote = null;
 function showQuote(q) {
@@ -619,9 +642,16 @@ function updatePrayerHighlight(force) {
   else if (cur === 4) { next = 0; nextTime = new Date(times[0].getTime() + 864e5); }
   else { next = cur + 1; nextTime = times[next]; }
   if (cur === 0 && state.prayer.Sunrise && now >= hhmmToDate(state.prayer.Sunrise)) cur = -1; // Fajr time is over after sunrise
-  var html = '';
-  for (var k = 0; k < 5; k++) html += '<div class="pr' + (k === cur ? ' now' : '') + '"><div class="n">' + PRAYERS[k][1] + '</div><div class="t">' + fmtTime(times[k]).replace(/(am|pm)$/, '') + '</div></div>';
-  if (force || $('prayerRow').innerHTML !== html) { $('prayerRow').innerHTML = html; fitPrayer(); }
+  // Carousel: the current prayer in the middle, neighbours fading out on either side
+  var centre = cur >= 0 ? cur : next, html = '', STEP = 210;
+  for (var k = -2; k <= 2; k++) {
+    var idx = (centre + k + 5) % 5;
+    var cls = 'pc' + (k === 0 ? (cur >= 0 ? ' cur' : ' soon') : '');
+    var op = k === 0 ? 1 : (Math.abs(k) === 1 ? .8 : .4);
+    html += '<div class="' + cls + '" style="left:calc(50% + ' + (k * STEP) + 'px);opacity:' + op + '"><div class="n">' + PRAYERS[idx][1] +
+      '</div><div class="t">' + fmtTime(times[idx]).replace(/(am|pm)$/, '') + '</div></div>';
+  }
+  if (force || $('prayerRow').getAttribute('data-k') !== html) { $('prayerRow').setAttribute('data-k', html); $('prayerRow').innerHTML = html; fitPrayer(); }
   var mins = Math.round((nextTime - now) / 6e4), hh = Math.floor(mins / 60), mm = mins % 60;
   $('prayerNext').textContent = 'Next \u00b7 ' + PRAYERS[next][1] + ' in ' + (hh ? hh + 'h ' : '') + mm + 'm';
 }
@@ -719,12 +749,41 @@ function every(fn, mins) { fn().catch(retryLater(fn)); setInterval(function () {
 
 var quoteTimer = null;
 function showQuoteFull() {
-  if ($('mini').className === 'on' || Date.now() - lastTouch < 60e3 || document.activeElement === $('addInput')) return;
+  if (typeof busy === 'function' ? busy() : false) return;
   $('quoteFull').className = 'on';
   clearTimeout(quoteTimer);
   quoteTimer = setTimeout(function () { $('quoteFull').className = ''; }, SETTINGS.quoteSeconds * 1000);
 }
 $('quoteFull').addEventListener('click', function () { clearTimeout(quoteTimer); $('quoteFull').className = ''; });
+
+var newsTimer = null;
+function busy() { return $('mini').className === 'on' || Date.now() - lastTouch < 60e3 || document.activeElement === $('addInput') ||
+  $('quoteFull').className === 'on' || $('newsFull').className === 'on'; }
+function showNewsFull() {
+  if (busy()) return;
+  loadNews().catch(function () {}).then(function () {
+    var items = state.news.slice(0, 3); if (!items.length || busy()) return;
+    var i = 0;
+    var show = function () {
+      var it = items[i];
+      $('nText').style.opacity = 0; $('nImg').style.opacity = 0;
+      setTimeout(function () {
+        $('nImg').style.backgroundImage = it.img ? 'url("' + it.img + '")' : 'linear-gradient(160deg, #e08a35, #b9512a)';
+        $('nLabel').textContent = 'BBC News \u00b7 ' + (i + 1) + ' of ' + items.length;
+        $('nTitle').textContent = it.title; $('nDesc').textContent = it.desc || '';
+        $('nText').style.opacity = 1; $('nImg').style.opacity = 1;
+      }, 600);
+    };
+    show(); $('newsFull').className = 'on';
+    clearInterval(newsTimer);
+    newsTimer = setInterval(function () {
+      i++;
+      if (i >= items.length) { clearInterval(newsTimer); $('newsFull').className = ''; return; }
+      show();
+    }, SETTINGS.newsSlideSeconds * 1000);
+  });
+}
+$('newsFull').addEventListener('click', function () { clearInterval(newsTimer); $('newsFull').className = ''; });
 
 function start() {
   tickClock(); setInterval(tickClock, 10e3);
@@ -733,11 +792,11 @@ function start() {
   every(loadAqi, 60);
   every(loadAqiTrend, 120);
   loadPrayer().catch(retryLater(loadPrayer));
-  every(loadNews, 120);
-  setInterval(showHeadline, 15e3);
   every(loadCalendar, 60);
   every(loadTasks, 10);
   setInterval(showQuoteFull, SETTINGS.quoteEvery * 60e3);
+  setTimeout(function () { showNewsFull(); setInterval(showNewsFull, SETTINGS.newsEvery * 60e3); }, SETTINGS.newsEvery * 30e3);
+  if (/news=1/.test(location.hash)) { lastTouch = 0; setTimeout(showNewsFull, 800); }
   if (/quote=1/.test(location.hash)) { lastTouch = 0; setTimeout(showQuoteFull, 800); }
   setTimeout(fitNums, 300);
 }
@@ -752,7 +811,7 @@ var DEMO = (function () {
   return {
     ping: function () { return { ok: true }; },
     aqi: function () { return { aqi: 214, main: 'p2' }; },
-    news: function () { return { items: [{ title: 'Sample headline: this is where BBC top stories will appear' }, { title: 'Sample headline: headlines rotate every 15 seconds' }] }; },
+    news: function () { return { items: [{ title: 'Sample headline: the top BBC story appears here, big enough to read across the room', desc: 'A one-line summary of the story sits underneath, with the story\u2019s photo filling the screen behind.' }, { title: 'Second headline', desc: 'Summary.' }, { title: 'Third headline', desc: 'Summary.' }] }; },
     calendar: function () { return { events: [
       { title: 'Lab 8 weekly call', start: at(0, 11), end: at(0, 12), color: '#4986e7' },
       { title: 'Tennis', start: at(0, 17, 30), end: at(0, 19), color: '#16a765' },
