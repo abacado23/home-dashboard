@@ -235,16 +235,19 @@
   .pc.soon { border-color: rgba(255,255,255,.85); }
   .pr .t { font-family: Oswald, -apple-system, "SF Pro Display", "Helvetica Neue", Inter, Arial, sans-serif; font-weight: 500; letter-spacing: 0; font-size: 52px; line-height: 1.1; margin-top: 4px; white-space: nowrap; }
   /* full-screen quote */
-  #quoteFull { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--cream); color: var(--ink); opacity: 0; pointer-events: none;
-    transition: opacity 1.5s ease; display: -webkit-box; display: flex; -webkit-box-align: center; align-items: center; -webkit-box-pack: center; justify-content: center; padding: 60px 80px; }
+  #quoteFull { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #f6efe2; color: #2a1d12; opacity: 0; pointer-events: none;
+    transition: opacity 1.5s ease; display: -webkit-box; display: flex; -webkit-box-align: center; align-items: center; padding: 0 120px; }
+  #quoteFull::before { content: ""; position: absolute; top: 28px; left: 28px; right: 28px; bottom: 28px; border: 1px solid rgba(42,29,18,.18); border-radius: 6px; pointer-events: none; }
   #quoteFull.on { opacity: 1; pointer-events: auto; }
-  #qInner { display: -webkit-box; display: flex; -webkit-box-align: center; align-items: center; max-width: 900px; }
-  #quoteFull #cover { width: 210px; height: 315px; margin-right: 54px; border-radius: 8px; box-shadow: 0 24px 50px rgba(40,10,0,.3); }
-  #quoteFull .fakeCover .ft { font-size: 26px; }
-  #quoteFull .fakeCover .fa { font-size: 13px; }
-  #qLabel { font-size: 14px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--inkMuted); margin-bottom: 18px; }
-  #quoteFull #quote { font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: 44px; line-height: 1.3; color: var(--ink); }
-  #quoteFull #quote .by { font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; font-style: normal; font-size: 20px; font-weight: 600; color: var(--inkMuted); margin-top: 22px; }
+  #quoteFull.dark { background: #141210; color: #efe6d8; }
+  #quoteFull.dark::before { border-color: rgba(239,230,216,.12); }
+  #qInner { max-width: 900px; }
+  #qMark { font-family: Georgia, "Times New Roman", serif; font-size: 220px; line-height: 1; height: 120px; margin-bottom: 10px; color: #d8702f; }
+  #quoteFull #quote { font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: 52px; line-height: 1.28; color: inherit; }
+  #qRule { width: 56px; height: 2px; background: #d8702f; margin: 40px 0 22px; }
+  #qAuthor { font-size: 22px; font-weight: 700; letter-spacing: .02em; }
+  #qBook { font-size: 17px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; margin-top: 8px; color: #8a7360; }
+  #quoteFull.dark #qBook { color: #8f857a; }
   /* full-screen news */
   #newsFull { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #14110f; opacity: 0; pointer-events: none; transition: opacity 1.5s ease; overflow: hidden; }
   #newsFull.on { opacity: 1; pointer-events: auto; }
@@ -306,10 +309,10 @@
   </div>
 
   <div id="news" style="display:none"><span id="newsTag"></span><span id="newsText"></span></div>
-  <span id="ver">v16</span>
+  <span id="ver">v18</span>
 </div>
 
-<div id="quoteFull"><div id="qInner"><div id="cover"></div><div id="quoteText"><div id="qLabel">Quote of the day</div><div id="quote"></div></div></div></div>
+<div id="quoteFull"><div id="qInner"><div id="qMark">&ldquo;</div><div id="quote"></div><div id="qRule"></div><div id="qAuthor"></div><div id="qBook"></div></div><div id="cover" style="display:none"></div><div id="qLabel" style="display:none"></div></div>
 <div id="newsFull"><div id="nImg"></div><div id="nShade"></div>
   <div id="nText"><div id="nLabel"></div><div id="nTitle"></div><div id="nDesc"></div></div></div>
 <div id="mini"><div id="miniTime"></div><div id="miniDate"></div></div>
@@ -335,8 +338,10 @@ var SETTINGS = {
   lat: 31.5204, lon: 74.3587,            // Lahore
   theme: 'auto',                         // 'auto' follows the sun, or fix one: 'dawn', 'day', 'dusk', 'night'
   use24h: false,
-  minimalStart: '21:00', minimalEnd: '05:30', // just a clock on black between these times (tap to peek at the dashboard)
+  minimalStart: '23:30', minimalEnd: '05:30', // just a clock on black between these times (tap to peek at the dashboard)
   quoteEvery: 20, quoteSeconds: 30,       // show the quote full-screen every 20 minutes, for 30 seconds
+  quoteDarkFrom: '17:00', quoteDarkUntil: '06:00', // quote screen switches to the dark version between these times
+  quoteMode: 'each',                      // 'each' = a different quote every time, 'daily' = one quote per day
   newsEvery: 20, newsSlideSeconds: 10,    // top 3 BBC headlines full-screen every 20 minutes (halfway between quotes), 10 seconds each
   nightStart: '23:30', nightEnd: '06:30', // screen dims further between these times
   prayerMethod: 1,                        // 1 = Univ. of Islamic Sciences, Karachi
@@ -346,8 +351,7 @@ var SETTINGS = {
 
 /* Quote of the day — one per day, in order. Add your own anywhere in the list:
    ['The quote', 'Author, Book'],
-   The book cover is found automatically. To use a specific cover, add its image link:
-   ['The quote', 'Author, Book', 'https://link-to-cover.jpg'],                 */
+*/
 var QUOTES = [
   ['It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.', 'Jane Austen, Pride and Prejudice'],
   ['It was the best of times, it was the worst of times.', 'Charles Dickens, A Tale of Two Cities'],
@@ -362,7 +366,7 @@ var QUOTES = [
   ['You pierce my soul. I am half agony, half hope.', 'Jane Austen, Persuasion'],
   ['Beware; for I am fearless, and therefore powerful.', 'Mary Shelley, Frankenstein'],
   ['I went to the woods because I wished to live deliberately.', 'Henry David Thoreau, Walden'],
-  ['I am large, I contain multitudes.', 'Walt Whitman, Song of Myself', false],
+  ['I am large, I contain multitudes.', 'Walt Whitman, Song of Myself'],
   ['I am not afraid of storms, for I am learning how to sail my ship.', 'Louisa May Alcott, Little Women'],
   ['Why, sometimes I’ve believed as many as six impossible things before breakfast.', 'Lewis Carroll, Through the Looking-Glass'],
   ['Mrs Dalloway said she would buy the flowers herself.', 'Virginia Woolf, Mrs Dalloway'],
@@ -370,11 +374,47 @@ var QUOTES = [
   ['There is nothing like staying at home for real comfort.', 'Jane Austen, Emma'],
   ['Hell is empty and all the devils are here.', 'William Shakespeare, The Tempest'],
   ['The course of true love never did run smooth.', 'William Shakespeare, A Midsummer Night’s Dream'],
-  ['Two roads diverged in a wood, and I — I took the one less traveled by, and that has made all the difference.', 'Robert Frost, The Road Not Taken', false],
+  ['Two roads diverged in a wood, and I — I took the one less traveled by, and that has made all the difference.', 'Robert Frost, The Road Not Taken'],
   ['“Hope” is the thing with feathers that perches in the soul.', 'Emily Dickinson'],
   ['All that we see or seem is but a dream within a dream.', 'Edgar Allan Poe'],
   ['It is a far, far better thing that I do, than I have ever done.', 'Charles Dickens, A Tale of Two Cities'],
-  ['The only way to get rid of a temptation is to yield to it.', 'Oscar Wilde, The Picture of Dorian Gray']
+  ['The only way to get rid of a temptation is to yield to it.', 'Oscar Wilde, The Picture of Dorian Gray'],
+  ['Because I could not stop for Death – He kindly stopped for me.', 'Emily Dickinson, Because I could not stop for Death'],
+  ['And yes I said yes I will Yes.', 'James Joyce, Ulysses'],
+  ['This is the way the world ends. Not with a bang but a whimper.', 'T. S. Eliot, The Hollow Men'],
+  ['There is no place like home.', 'L. Frank Baum, The Wonderful Wizard of Oz'],
+  ['Curiouser and curiouser!', 'Lewis Carroll, Alice’s Adventures in Wonderland'],
+  ['All the world’s a stage, and all the men and women merely players.', 'William Shakespeare, As You Like It'],
+  ['To be, or not to be: that is the question.', 'William Shakespeare, Hamlet'],
+  ['Tyger Tyger, burning bright, in the forests of the night.', 'William Blake, The Tyger'],
+  ['Things fall apart; the centre cannot hold.', 'W. B. Yeats, The Second Coming'],
+  ['In Xanadu did Kubla Khan a stately pleasure-dome decree.', 'Samuel Taylor Coleridge, Kubla Khan'],
+  ['’Tis better to have loved and lost than never to have loved at all.', 'Alfred, Lord Tennyson, In Memoriam A.H.H.'],
+  ['How do I love thee? Let me count the ways.', 'Elizabeth Barrett Browning, Sonnet 43'],
+  ['I loved her against reason, against promise, against peace, against hope, against happiness, against all discouragement that could be.', 'Charles Dickens, Great Expectations'],
+  ['All human wisdom is contained in these two words — Wait and Hope.', 'Alexandre Dumas, The Count of Monte Cristo'],
+  ['Gather ye rosebuds while ye may, old Time is still a-flying.', 'Robert Herrick, To the Virgins, to Make Much of Time'],
+  ['Quoth the Raven, “Nevermore.”', 'Edgar Allan Poe, The Raven'],
+  ['Some are born great, some achieve greatness, and some have greatness thrust upon ’em.', 'William Shakespeare, Twelfth Night'],
+  ['It was a dark and stormy night.', 'Edward Bulwer-Lytton, Paul Clifford'],
+  ['April is the cruellest month.', 'T. S. Eliot, The Waste Land'],
+  ['Beauty is truth, truth beauty, — that is all ye know on earth, and all ye need to know.', 'John Keats, Ode on a Grecian Urn'],
+  ['Look on my Works, ye Mighty, and despair!', 'Percy Bysshe Shelley, Ozymandias'],
+  ['“The time has come,” the Walrus said, “to talk of many things.”', 'Lewis Carroll, The Walrus and the Carpenter'],
+  ['Theirs not to reason why, theirs but to do and die.', 'Alfred, Lord Tennyson, The Charge of the Light Brigade'],
+  ['We wear the mask that grins and lies.', 'Paul Laurence Dunbar, We Wear the Mask'],
+  ['And now abideth faith, hope, charity, these three; but the greatest of these is charity.', 'The Bible, 1 Corinthians 13'],
+  ['The woods are lovely, dark and deep, but I have promises to keep, and miles to go before I sleep.', 'Robert Frost, Stopping by Woods on a Snowy Evening'],
+  ['I wandered lonely as a cloud that floats on high o’er vales and hills.', 'William Wordsworth, I Wandered Lonely as a Cloud'],
+  ['I would prefer not to.', 'Herman Melville, Bartleby, the Scrivener'],
+  ['I am the master of my fate, I am the captain of my soul.', 'William Ernest Henley, Invictus'],
+  ['To err is human, to forgive divine.', 'Alexander Pope, An Essay on Criticism'],
+  ['Shall I compare thee to a summer’s day? Thou art more lovely and more temperate.', 'William Shakespeare, Sonnet 18'],
+
+  /* ===== YOUR OWN QUOTES — paste them below this line, one per line, like this:
+     ['The quote goes here', 'Author, Book Title'],
+  ===== */
+
 ];
 
 /* =====================================================================
@@ -450,7 +490,7 @@ function tickClock() {
   if ($('time').innerHTML !== tHtml) { $('time').innerHTML = tHtml; fitClock(); }
   $('date').textContent = d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
   var start = new Date(d.getFullYear(), 0, 0), doy = Math.floor((d - start) / 864e5);
-  showQuote(QUOTES[doy % QUOTES.length]);
+  if (SETTINGS.quoteMode === 'daily') showQuote(QUOTES[doy % QUOTES.length]);
   var now = h * 60 + m;
   var inRange = function (a, b) { var x = hhmmToMin(a), y = hhmmToMin(b); return x > y ? (now >= x || now < y) : (now >= x && now < y); };
   var minimal = inRange(SETTINGS.minimalStart, SETTINGS.minimalEnd) && Date.now() > peekUntil;
@@ -495,26 +535,13 @@ function fitPrayer() {
 var shownQuote = null;
 function showQuote(q) {
   if (shownQuote === q) return; shownQuote = q;
-  $('quote').innerHTML = '“' + esc(q[0]) + '”<span class="by">— ' + esc(q[1]) + '</span>';
   var parts = q[1].split(', '), author = parts[0], book = parts.slice(1).join(', ');
-  var fake = function () {
-    $('cover').innerHTML = '<div class="fakeCover"><div class="ft">' + esc(book || author) + '</div><div class="fr"></div><div class="fa">' + esc(author) + '</div></div>';
-  };
-  var show = function (url) {
-    if (!url) return fake();
-    var img = new Image(); img.onload = function () { if (shownQuote === q) { $('cover').innerHTML = ''; $('cover').appendChild(img); } }; img.onerror = fake; img.src = url;
-  };
-  fake();
-  if (q[2] === false || !book || CFG.demo) return;          // no cover for poems / quotes without a book
-  if (q[2]) return show(q[2]);                              // your own cover link, if you add one
-  var key = 'cover:' + q[1], saved = load(key);
-  if (saved) return show(saved === 'none' ? '' : saved);
-  getJSON('https://openlibrary.org/search.json?title=' + encodeURIComponent(book) + '&author=' + encodeURIComponent(author) + '&limit=1&fields=cover_i')
-    .then(function (j) {
-      var id = j.docs && j.docs[0] && j.docs[0].cover_i;
-      var url = id ? 'https://covers.openlibrary.org/b/id/' + id + '-M.jpg?default=false' : '';
-      store(key, url || 'none'); show(url);
-    }).catch(function () {});
+  $('quote').textContent = q[0];
+  $('qAuthor').textContent = author;
+  $('qBook').textContent = book;
+  $('qBook').style.display = book ? '' : 'none';
+  // long quotes get slightly smaller type
+  $('quote').style.fontSize = q[0].length > 160 ? '38px' : q[0].length > 100 ? '44px' : '52px';
 }
 var sun = { rise: '06:30', set: '17:30' };   // replaced by today's real times from the weather
 function applyTheme() {
@@ -748,17 +775,27 @@ function retryLater(fn) { return function () { setTimeout(function () { fn().cat
 function every(fn, mins) { fn().catch(retryLater(fn)); setInterval(function () { fn().catch(function () {}); }, mins * 60e3); }
 
 var quoteTimer = null;
+function nextQuote() {
+  var i = (parseInt(load('quoteIdx'), 10) || 0) + 1;
+  if (i >= QUOTES.length) i = 0;
+  store('quoteIdx', String(i));
+  return QUOTES[i];
+}
 function showQuoteFull() {
   if (typeof busy === 'function' ? busy() : false) return;
-  $('quoteFull').className = 'on';
+  if (SETTINGS.quoteMode !== 'daily') showQuote(nextQuote());
+  var nowM = new Date().getHours() * 60 + new Date().getMinutes(), df = hhmmToMin(SETTINGS.quoteDarkFrom), du = hhmmToMin(SETTINGS.quoteDarkUntil);
+  var dark = df > du ? (nowM >= df || nowM < du) : (nowM >= df && nowM < du);
+  $('quoteFull').className = dark ? 'dark' : '';
+  $('quoteFull').className += ' on';
   clearTimeout(quoteTimer);
-  quoteTimer = setTimeout(function () { $('quoteFull').className = ''; }, SETTINGS.quoteSeconds * 1000);
+  quoteTimer = setTimeout(function () { $('quoteFull').className = $('quoteFull').className.replace(' on', ''); }, SETTINGS.quoteSeconds * 1000);
 }
-$('quoteFull').addEventListener('click', function () { clearTimeout(quoteTimer); $('quoteFull').className = ''; });
+$('quoteFull').addEventListener('click', function () { clearTimeout(quoteTimer); $('quoteFull').className = $('quoteFull').className.replace(' on', ''); });
 
 var newsTimer = null;
 function busy() { return $('mini').className === 'on' || Date.now() - lastTouch < 60e3 || document.activeElement === $('addInput') ||
-  $('quoteFull').className === 'on' || $('newsFull').className === 'on'; }
+  / on/.test($('quoteFull').className) || $('newsFull').className === 'on'; }
 function showNewsFull() {
   if (busy()) return;
   loadNews().catch(function () {}).then(function () {
